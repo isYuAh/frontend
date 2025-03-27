@@ -1,21 +1,18 @@
+import pluginVue from 'eslint-plugin-vue'
 import globals from 'globals'
-import tseslint from 'typescript-eslint'
 
-export default tseslint.config(
-    {ignores: ['dist']},
+export default [
+    ...pluginVue.configs['vue3-recommended'],
     {
-        extends: [
-            ...tseslint.configs.recommendedTypeChecked,
-            ...tseslint.configs.stylisticTypeChecked,
-        ],
-        files: ['**/*.{ts,tsx}'],
-        languageOptions: {
-            ecmaVersion: 2020,
-            globals: globals.browser,
-            parserOptions: {
-                project: ['./tsconfig.node.json', './tsconfig.app.json'],
-                tsconfigRootDir: import.meta.dirname,
-            },
+        rules: {
+            // override/add rules settings here, such as:
+            // 'vue/no-unused-vars': 'error'
         },
-    },
-)
+        languageOptions: {
+            sourceType: 'module',
+            globals: {
+                ...globals.browser
+            }
+        }
+    }
+]
