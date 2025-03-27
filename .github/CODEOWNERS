@@ -1,2 +1,9 @@
 # Default owners
-* @PassionPenguin
+* @points-management/core
+
+/src/ @points-management/frontend
+/public/ @points-management/frontend
+/index.html/ @points-management/frontend
+/package*json @points-management/frontend
+/tsconfig*json @points-management/frontend
+/vite.config.json @points-management/frontend
