@@ -3,21 +3,22 @@ import { getCookie } from '@utils/cookie';
 import { GoodDate } from '@utils/datetime';
 import { errorBadRequest, errorForbidden, errorNotFound } from '@utils/error-msg';
 
-enum AdminType {
-    AdminSU,
-    AdminInstructor,
-    AdminLocalOrg,
-    AdminLocalCommittee,
-    AdminOrg,
-    AdminCommittee,
+enum UserType {
+    UserSU,
+    UserInstructor,
+    UserLocalOrg,
+    UserLocalCommittee,
+    UserOrg,
+    UserCommittee,
+    UserStudent
 }
 
-const AdminTypeString = ['超级管理员', '指导老师', '院管组织', '院团委', '校级组织', '校团委'];
+const UserTypeString = ['超级管理员', '指导老师', '院管组织', '院团委', '校级组织', '校团委'];
 
-export class Admin {
+export class User {
     id: string;
     name: string;
-    type: AdminType;
+    type: UserType;
     description: string;
     head: string;
     password: string;
@@ -27,12 +28,12 @@ export class Admin {
     constructor(
         id: string,
         name: string,
-        type: AdminType,
+        type: UserType,
         description: string,
         head: string,
         password: string,
         createdAt: string | GoodDate,
-        deletedAt?: string | GoodDate,
+        deletedAt?: string | GoodDate
     ) {
         this.id = id;
         this.name = name;
@@ -48,8 +49,8 @@ export class Admin {
             : undefined;
     }
 
-    static fromJSON(json: any): Admin {
-        return new Admin(
+    static fromJSON(json: any): User {
+        return new User(
             json.id,
             json.name,
             json.type,
@@ -57,30 +58,27 @@ export class Admin {
             json.head,
             json.password,
             json.createdAt,
-            json.updatedAt,
+            json.updatedAt
         );
     }
 
-    static fromJSONList(json: any): Admin[] {
-        return json.map((item: any) => Admin.fromJSON(item));
+    static fromJSONList(json: any): User[] {
+        return json.map((item: any) => User.fromJSON(item));
     }
 
-    static template = new Admin(
-        '', '', AdminType.AdminSU,
-        '', '', '',
-        new GoodDate(), undefined);
+    static template = new User('', '', UserType.UserSU, '', '', '', new GoodDate(), undefined);
 
     typeString() {
-        return AdminTypeString[this.type];
+        return UserTypeString[this.type];
     }
 
-    static list = async (limit: number, offset: number, type: AdminType, props: { serverEndpoint?: string }) => {
+    static list = async (limit: number, offset: number, type: UserType, props: { serverEndpoint?: string }) => {
         const response = await fetch(
-            props.serverEndpoint + '/admins' + `?limit=${limit}&offset=${offset}&type=${type}`,
+            props.serverEndpoint + '/users' + `?limit=${limit}&offset=${offset}&type=${type}`
         );
         const json = await response.json();
         if (response.ok) {
-            return Admin.fromJSONList(json);
+            return User.fromJSONList(json);
         } else if (response.status === 400) {
             throw new Error(errorBadRequest);
         } else {
@@ -89,10 +87,10 @@ export class Admin {
     };
 
     static get = async (id: string, props: { serverEndpoint?: string }) => {
-        const response = await fetch(props.serverEndpoint + '/admins/' + id);
+        const response = await fetch(props.serverEndpoint + '/users/' + id);
         const json = await response.json();
         if (response.ok) {
-            return Admin.fromJSON(json);
+            return User.fromJSON(json);
         } else if (response.status === 404) {
             throw new Error(errorNotFound);
         } else {
@@ -107,9 +105,9 @@ export class Admin {
             password: string;
             head: string;
         },
-        props: { serverEndpoint?: string },
+        props: { serverEndpoint?: string }
     ) => {
-        const response = await fetch(props.serverEndpoint + '/admins/new', {
+        const response = await fetch(props.serverEndpoint + '/users/new', {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -121,7 +119,7 @@ export class Admin {
         const json = await response.json();
 
         if (response.ok) {
-            return Admin.fromJSON(json.data);
+            return User.fromJSON(json.data);
         } else if (response.status === 403) {
             throw new Error(errorForbidden);
         } else {
@@ -133,18 +131,18 @@ export class Admin {
         id: string,
         data: {
             name: string;
-            type: AdminType;
+            type: UserType;
             description: string;
             password: string;
             head: string;
         },
-        props: { serverEndpoint?: string },
+        props: { serverEndpoint?: string }
     ) => {
         if (data.password !== '') {
             data.password = await hashPassword(data.password);
         }
 
-        const response = await fetch(props.serverEndpoint + '/admins/update/' + id, {
+        const response = await fetch(props.serverEndpoint + '/users/update/' + id, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -155,7 +153,7 @@ export class Admin {
         const json = await response.json();
 
         if (response.ok) {
-            return Admin.fromJSON(json.data);
+            return User.fromJSON(json.data);
         } else if (response.status === 400) {
             throw new Error(errorBadRequest);
         } else if (response.status === 403) {
@@ -168,7 +166,7 @@ export class Admin {
     };
 
     static delete = async (id: string, props: { serverEndpoint?: string }) => {
-        const response = await fetch(props.serverEndpoint + '/admins/' + id, {
+        const response = await fetch(props.serverEndpoint + '/users/' + id, {
             method: 'DELETE',
             headers: {
                 Authorization: getCookie('token') || '',
@@ -186,27 +184,25 @@ export class Admin {
         }
     };
 
-    static signIn = async (
-        data: {
-            name: string;
-            password: string;
-        },
-        props: { serverEndpoint?: string },
-    ): Promise<{ token: string; admin: Admin }> => {
-        const response = await fetch(props.serverEndpoint + '/users/sign-in', {
-                method: 'POST',
-                credentials: 'include',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: getCookie('token') || '',
-                },
-                body: JSON.stringify(data),
-            }),
-            json = await response.json();
-        if (response.ok) {
-            return { token: json.data.token as string, admin: Admin.fromJSON(json.data.admin) };
-        } else {
-            throw new Error(json.error);
+    static async signIn(
+        credentials: { name: string; password: string },
+        options: { serverEndpoint?: string } = {}
+    ) {
+        const endpoint = options.serverEndpoint || '';
+
+        const response = await fetch(`${endpoint}/user/sign-in`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(credentials),
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || '登录失败');
         }
-    };
+
+        return await response.json();
+    }
 }

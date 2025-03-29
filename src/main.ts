@@ -3,9 +3,13 @@ import './style.css';
 import App from './App.vue';
 import { createRouter, createWebHistory } from 'vue-router';
 
-const HelloWorld = () => import('@components/HelloWorld.vue');
+// Lazy-loading
+const LoginPage = () => import('@pages/LoginPage.vue');
 
-const routes = [{ path: '/hello', component: HelloWorld }];
+const routes = [
+  { path: '/login', component: LoginPage },
+  { path: '/', redirect: '/login' }
+];
 
 const router = createRouter({
     history: createWebHistory(),

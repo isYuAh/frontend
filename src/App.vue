@@ -1,29 +1,48 @@
 <script setup lang="ts">
+import { useRoute } from 'vue-router';
+import { ref, provide } from 'vue';
+import Toast from '@components/toast.vue';
+
+const route = useRoute();
+const isLoginPage = () => route.path === '/login';
+
+interface ToastProps {
+    type: 'error' | 'success' | 'info';
+    message: string;
+}
+const bannerMessage = ref<ToastProps | null>(null);
+const setBannerMessage = (msg: ToastProps | null) => {
+    bannerMessage.value = msg;
+    setTimeout(() => {
+        bannerMessage.value = null;
+    }, 3000);
+};
+
+provide('banner', {
+    message: bannerMessage,
+    setMessage: setBannerMessage,
+});
 </script>
 
 <template>
-    <div>
-        <router-link to="/hello">
-            <img src="/vite.svg" class="logo" alt="Vite logo" />
-            <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
-        </router-link>
-    </div>
-    <router-view/>
+    <Toast
+        v-if="bannerMessage"
+        :message="bannerMessage.message"
+        :type="bannerMessage.type"
+        @close="setBannerMessage(null)"
+    />
+
+    <template v-if="isLoginPage()">
+        <router-view />
+    </template>
+
+    <template v-else>
+        <div class="container mx-auto py-4 text-center">
+            <!-- TODO: Header -->
+            <div class="nav-links"></div>
+            <router-view />
+        </div>
+    </template>
 </template>
 
-<style scoped>
-.logo {
-    height: 6em;
-    padding: 1.5em;
-    will-change: filter;
-    transition: filter 300ms;
-}
-
-.logo:hover {
-    filter: drop-shadow(0 0 2em #646cffaa);
-}
-
-.logo.vue:hover {
-    filter: drop-shadow(0 0 2em #42b883aa);
-}
-</style>
+<style scoped></style>
