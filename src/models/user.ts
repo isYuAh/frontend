@@ -10,7 +10,7 @@ enum UserType {
     UserLocalCommittee,
     UserOrg,
     UserCommittee,
-    UserStudent
+    UserStudent,
 }
 
 const UserTypeString = ['超级管理员', '指导老师', '院管组织', '院团委', '校级组织', '校团委'];
@@ -19,6 +19,19 @@ export class User {
     id: string;
     name: string;
     type: UserType;
+
+    constructor(id: string, name: string, type: UserType) {
+        this.id = id;
+        this.name = name;
+        this.type = type;
+    }
+
+    typeString() {
+        return UserTypeString[this.type];
+    }
+}
+
+export class Admin extends User {
     description: string;
     head: string;
     password: string;
@@ -35,9 +48,7 @@ export class User {
         createdAt: string | GoodDate,
         deletedAt?: string | GoodDate
     ) {
-        this.id = id;
-        this.name = name;
-        this.type = type;
+        super(id, name, type);
         this.description = description;
         this.head = head;
         this.password = password;
@@ -49,8 +60,8 @@ export class User {
             : undefined;
     }
 
-    static fromJSON(json: any): User {
-        return new User(
+    static fromJSON(json: any): Admin {
+        return new Admin(
             json.id,
             json.name,
             json.type,
@@ -62,23 +73,19 @@ export class User {
         );
     }
 
-    static fromJSONList(json: any): User[] {
-        return json.map((item: any) => User.fromJSON(item));
+    static fromJSONList(json: any): Admin[] {
+        return json.map((item: any) => Admin.fromJSON(item));
     }
 
-    static template = new User('', '', UserType.UserSU, '', '', '', new GoodDate(), undefined);
+    static template = new Admin('', '', UserType.UserSU, '', '', '', new GoodDate(), undefined);
 
-    typeString() {
-        return UserTypeString[this.type];
-    }
-
-    static list = async (limit: number, offset: number, type: UserType, props: { serverEndpoint?: string }) => {
+    static listAdmin = async (limit: number, offset: number, type: UserType, props: { serverEndpoint?: string }) => {
         const response = await fetch(
-            props.serverEndpoint + '/users' + `?limit=${limit}&offset=${offset}&type=${type}`
+            props.serverEndpoint + '/user/admin' + `?limit=${limit}&offset=${offset}&type=${type}`
         );
         const json = await response.json();
         if (response.ok) {
-            return User.fromJSONList(json);
+            return Admin.fromJSONList(json);
         } else if (response.status === 400) {
             throw new Error(errorBadRequest);
         } else {
@@ -86,11 +93,11 @@ export class User {
         }
     };
 
-    static get = async (id: string, props: { serverEndpoint?: string }) => {
-        const response = await fetch(props.serverEndpoint + '/users/' + id);
+    static getAdmin = async (id: string, props: { serverEndpoint?: string }) => {
+        const response = await fetch(props.serverEndpoint + '/user/admin/' + id);
         const json = await response.json();
         if (response.ok) {
-            return User.fromJSON(json);
+            return Admin.fromJSON(json);
         } else if (response.status === 404) {
             throw new Error(errorNotFound);
         } else {
@@ -98,7 +105,7 @@ export class User {
         }
     };
 
-    static create = async (
+    static createAdmin = async (
         data: {
             name: string;
             type: number;
@@ -107,7 +114,7 @@ export class User {
         },
         props: { serverEndpoint?: string }
     ) => {
-        const response = await fetch(props.serverEndpoint + '/users/new', {
+        const response = await fetch(props.serverEndpoint + '/user/admin/new', {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -119,7 +126,7 @@ export class User {
         const json = await response.json();
 
         if (response.ok) {
-            return User.fromJSON(json.data);
+            return Admin.fromJSON(json.data);
         } else if (response.status === 403) {
             throw new Error(errorForbidden);
         } else {
@@ -127,7 +134,7 @@ export class User {
         }
     };
 
-    static update = async (
+    static updateAdmin = async (
         id: string,
         data: {
             name: string;
@@ -142,7 +149,7 @@ export class User {
             data.password = await hashPassword(data.password);
         }
 
-        const response = await fetch(props.serverEndpoint + '/users/update/' + id, {
+        const response = await fetch(props.serverEndpoint + '/user/admin/update/' + id, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -153,7 +160,7 @@ export class User {
         const json = await response.json();
 
         if (response.ok) {
-            return User.fromJSON(json.data);
+            return Admin.fromJSON(json.data);
         } else if (response.status === 400) {
             throw new Error(errorBadRequest);
         } else if (response.status === 403) {
@@ -165,8 +172,8 @@ export class User {
         }
     };
 
-    static delete = async (id: string, props: { serverEndpoint?: string }) => {
-        const response = await fetch(props.serverEndpoint + '/users/' + id, {
+    static deleteAdmin = async (id: string, props: { serverEndpoint?: string }) => {
+        const response = await fetch(props.serverEndpoint + '/user/admin' + id, {
             method: 'DELETE',
             headers: {
                 Authorization: getCookie('token') || '',
@@ -184,13 +191,13 @@ export class User {
         }
     };
 
-    static async signIn(
+    static async signInAdmin(
         credentials: { name: string; password: string },
         options: { serverEndpoint?: string } = {}
     ) {
         const endpoint = options.serverEndpoint || '';
 
-        const response = await fetch(`${endpoint}/user/sign-in`, {
+        const response = await fetch(`${endpoint}/user/admin/sign-in`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -205,4 +212,100 @@ export class User {
 
         return await response.json();
     }
+}
+
+export class Student extends User {
+    class: string;
+
+    constructor(id: string, name: string, type: UserType, class_: string) {
+        super(id, name, type);
+        this.class = class_;
+    }
+
+    static fromJSON(json: any): Student {
+        return new Student(json.id, json.name, json.type, json.class);
+    }
+
+    static fromJSONList(json: any): Student[] {
+        return json.map((item: any) => Student.fromJSON(item));
+    }
+
+    static template = new Student('', '', UserType.UserStudent, '');
+
+    static importStudents = async (data: {
+        students: {
+            id: string;
+            name: string;
+            class: string;
+        }[];
+        classes: {
+            name: string;
+            school: string;
+        }[];
+        schools: {
+            name: string;
+        }[];
+    }) => {
+        const response = await fetch('/user/student/import', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: getCookie('token') || '',
+            },
+            body: JSON.stringify(data),
+        });
+
+        const json = await response.json();
+        if (response.ok) {
+            return json;
+        } else if (response.status === 400) {
+            throw new Error(errorBadRequest);
+        } else if (response.status === 403) {
+            throw new Error(errorForbidden);
+        } else {
+            throw new Error(json.error);
+        }
+    };
+}
+
+export class Class {
+    id: string;
+    name: string;
+    school: string;
+
+    constructor(id: string, name: string, school: string) {
+        this.id = id;
+        this.name = name;
+        this.school = school;
+    }
+
+    static fromJSON(json: any): Class {
+        return new Class(json.id, json.name, json.school);
+    }
+
+    static fromJSONList(json: any): Class[] {
+        return json.map((item: any) => Class.fromJSON(item));
+    }
+
+    static template = new Class('', '', '');
+}
+
+export class School {
+    id: string;
+    name: string;
+
+    constructor(id: string, name: string) {
+        this.id = id;
+        this.name = name;
+    }
+
+    static fromJSON(json: any): School {
+        return new School(json.id, json.name);
+    }
+
+    static fromJSONList(json: any): School[] {
+        return json.map((item: any) => School.fromJSON(item));
+    }
+
+    static template = new School('', '');
 }

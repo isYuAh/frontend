@@ -2,7 +2,7 @@
 import { ref, inject } from 'vue';
 import { useRouter } from 'vue-router';
 import { setTitle } from '@utils/title';
-import { User } from '@models/user';
+import { Admin } from '@models/user';
 import { setCookie } from '@utils/cookie';
 import { setStorageItem } from '@utils/storage';
 
@@ -31,7 +31,7 @@ const handleSubmit = async () => {
     loading.value = true;
 
     try {
-        const result = await User.signIn(
+        const result = await Admin.signInAdmin(
             formData.value,
             { serverEndpoint: '/api' }
         );
