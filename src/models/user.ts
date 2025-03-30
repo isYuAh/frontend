@@ -29,6 +29,21 @@ export class User {
     typeString() {
         return UserTypeString[this.type];
     }
+
+    static signOut = async (props: { serverEndpoint?: string }) => {
+        const response = await fetch(props.serverEndpoint + '/user/sign-out', {
+            method: 'POST',
+            headers: {
+                Authorization: getCookie('token') || '',
+            },
+        });
+        if (response.ok) {
+            return true;
+        } else {
+            const json = await response.json();
+            throw new Error(json.error);
+        }
+    }
 }
 
 export class Admin extends User {
@@ -203,14 +218,13 @@ export class Admin extends User {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify(credentials),
-        });
+        }), json = await response.json();
 
         if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.message || '登录失败');
+            throw new Error(json.message || '登录失败');
         }
 
-        return await response.json();
+        return json.data;
     }
 }
 

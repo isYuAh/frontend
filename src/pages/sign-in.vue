@@ -8,6 +8,7 @@ import { setStorageItem } from '@utils/storage';
 
 import TextInput from '@components/input-text.vue';
 import Spinner from '@components/spinner.vue';
+import Logo from '@components/logo.vue';
 
 const { setMessage } = inject('banner');
 
@@ -44,14 +45,14 @@ const handleSubmit = async () => {
             setCookie('token', result.token);
         }
 
-        setStorageItem('user', result.user);
+        setStorageItem('admin', JSON.stringify(result.admin));
 
         setMessage({
             type: 'success',
             message: '登录成功',
         });
         setTimeout(() => {
-            router.push('/user/dashboard');
+            router.push('/dashboard');
         }, 3000);
     } catch (error) {
         setMessage({
@@ -68,7 +69,7 @@ const handleSubmit = async () => {
         <img src="/images/background.png" alt="Background" class="absolute z-0 h-full w-full object-cover opacity-75" />
         <div class="z-10 flex flex-1 items-center justify-center p-4">
             <div class="w-full max-w-md rounded-lg bg-white/95 p-8 shadow-lg dark:bg-gray-900/95">
-                <img src="/images/logo.png" alt="Logo" class="mx-auto mb-8 h-12" />
+                <Logo class="mx-auto mb-8 h-12 text-white" />
 
                 <div class="mb-6 text-center">
                     <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-100">用户登录</h2>
@@ -101,7 +102,7 @@ const handleSubmit = async () => {
                     </button>
                 </form>
 
-                <div class="flex items-center mt-8 mb-4">
+                <div class="mt-8 mb-4 flex items-center">
                     <div class="h-0.5 flex-1 bg-gray-600 dark:bg-gray-400" />
                     <p class="h-6 px-4 text-center text-gray-600 dark:text-gray-400">其他登录方法</p>
                     <div class="h-0.5 flex-1 bg-gray-600 dark:bg-gray-400" />

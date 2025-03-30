@@ -2,14 +2,18 @@
 import { useRoute } from 'vue-router';
 import { ref, provide } from 'vue';
 import Toast from '@components/toast.vue';
+import DashboardSidebar from '@components/dashboard-sidebar.vue';
+import DashboardHeader from '@components/dashboard-header.vue';
 
 const route = useRoute();
-const isLoginPage = () => route.path === '/sign-in';
+const isSignInPage = () => route.path === '/sign-in';
+const isDashboardPage = () => route.path.startsWith('/dashboard');
 
 interface ToastProps {
     type: 'error' | 'success' | 'info';
     message: string;
 }
+
 const bannerMessage = ref<ToastProps | null>(null);
 const setBannerMessage = (msg: ToastProps | null) => {
     bannerMessage.value = msg;
@@ -32,8 +36,16 @@ provide('banner', {
         @close="setBannerMessage(null)"
     />
 
-    <template v-if="isLoginPage()">
+    <template v-if="isSignInPage()">
         <router-view />
+    </template>
+
+    <template v-else-if="isDashboardPage()">
+        <DashboardHeader />
+        <div class="flex">
+            <DashboardSidebar />
+            <router-view class="flex-1 p-8" />
+        </div>
     </template>
 
     <template v-else>
