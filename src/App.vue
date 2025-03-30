@@ -4,7 +4,7 @@ import { ref, provide } from 'vue';
 import Toast from '@components/toast.vue';
 
 const route = useRoute();
-const isLoginPage = () => route.path === '/login';
+const isLoginPage = () => route.path === '/sign-in';
 
 interface ToastProps {
     type: 'error' | 'success' | 'info';

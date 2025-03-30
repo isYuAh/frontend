@@ -25,7 +25,7 @@ const props = defineProps({
     tips: {
         type: String,
         default: '',
-    }
+    },
 });
 
 const emit = defineEmits(['update:modelValue']);
@@ -38,21 +38,24 @@ watch(inputValue, (newValue) => {
 });
 
 // Update local value when parent changes
-watch(() => props.modelValue, (newValue) => {
-    inputValue.value = newValue;
-});
+watch(
+    () => props.modelValue,
+    (newValue) => {
+        inputValue.value = newValue;
+    }
+);
 </script>
 
 <template>
     <div class="mb-4">
-        <label :for="id" class="block text-sm font-medium text-gray-700 mb-1">{{ label }}</label>
+        <label :for="id" class="mb-1.5 font-bold block text-sm text-gray-700 dark:text-gray-300">{{ label }}</label>
         <input
             :id="id"
             :type="type"
             v-model="inputValue"
             :placeholder="placeholder"
-            class="w-full rounded-md border border-gray-300 px-4 py-3 pr-12 focus:border-transparent focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            class="w-full rounded-md border border-gray-300 text-sm px-4 py-2 pr-12 placeholder:text-gray-800 focus:border-transparent focus:ring-2 focus:ring-blue-500 focus:outline-none dark:placeholder:text-gray-300"
         />
-        <p v-if="tips" class="mt-1 text-sm text-gray-500">{{ tips }}</p>
+        <p v-if="tips" class="mt-1 text-sm text-gray-600 dark:text-gray-400 font-medium">{{ tips }}</p>
     </div>
 </template>

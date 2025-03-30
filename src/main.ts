@@ -4,11 +4,11 @@ import App from './App.vue';
 import { createRouter, createWebHistory } from 'vue-router';
 
 // Lazy-loading
-const LoginPage = () => import('@pages/LoginPage.vue');
+const SignInPage = () => import('@pages/sign-in.vue');
 
 const routes = [
-  { path: '/login', component: LoginPage },
-  { path: '/', redirect: '/login' }
+  { path: '/sign-in', component: SignInPage },
+  { path: '/', redirect: '/sign-in' }
 ];
 
 const router = createRouter({
