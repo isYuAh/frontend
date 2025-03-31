@@ -9,7 +9,7 @@ export enum ReviewState {
     ReviewCommitteeRejected
 }
 
-export class ActivityReview {
+export class Review {
     id: string;
     type: number;
     owner: string;
@@ -42,8 +42,8 @@ export class ActivityReview {
         this.updatedAt = updatedAt;
     }
 
-    static fromJSON(json: any): ActivityReview {
-        return new ActivityReview(
+    static fromJSON(json: any): Review {
+        return new Review(
             json.id,
             json.type,
             json.owner,
@@ -56,12 +56,12 @@ export class ActivityReview {
         );
     }
 
-    static fromJSONList(json: any): ActivityReview[] {
-        return json.map((item: any) => ActivityReview.fromJSON(item));
+    static fromJSONList(json: any): Review[] {
+        return json.map((item: any) => Review.fromJSON(item));
     }
 
-    static template(): ActivityReview {
-        return new ActivityReview('', 0, '', '', '', '', '', 0);
+    static template(): Review {
+        return new Review('', 0, '', '', '', '', '', 0);
     }
 
     static list = async (activityId: string, props: { serverEndpoint?: string }) => {

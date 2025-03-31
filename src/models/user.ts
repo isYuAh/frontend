@@ -2,6 +2,7 @@ import { hashPassword } from '@utils/crypto';
 import { getCookie } from '@utils/cookie';
 import { GoodDate } from '@utils/datetime';
 import { errorBadRequest, errorForbidden, errorNotFound } from '@utils/error-msg';
+import { Ticket } from '@models/ticket';
 
 enum UserType {
     UserSU,
@@ -42,6 +43,23 @@ export class User {
         } else {
             const json = await response.json();
             throw new Error(json.error);
+        }
+    };
+
+    static signInOAuth2 = async (code: string, props: { serverEndpoint?: string }) => {
+        const response = await fetch(props.serverEndpoint + '/user/oauth2/sign-in?code=2023212276', {
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+        const json = await response.json();
+
+        if (response.ok) {
+            return json.data;
+        } else if (response.status === 403) {
+            throw new Error(errorForbidden);
+        } else {
+            throw new Error(json.message);
         }
     }
 }
@@ -206,19 +224,15 @@ export class Admin extends User {
         }
     };
 
-    static async signInAdmin(
-        credentials: { name: string; password: string },
-        options: { serverEndpoint?: string } = {}
-    ) {
-        const endpoint = options.serverEndpoint || '';
-
-        const response = await fetch(`${endpoint}/user/admin/sign-in`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(credentials),
-        }), json = await response.json();
+    static async signInAdmin(credentials: { name: string; password: string }, props: { serverEndpoint?: string } = {}) {
+        const response = await fetch(`${props.serverEndpoint}/user/admin/sign-in`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(credentials),
+            }),
+            json = await response.json();
 
         if (!response.ok) {
             throw new Error(json.message || '登录失败');
@@ -246,21 +260,24 @@ export class Student extends User {
 
     static template = new Student('', '', UserType.UserStudent, '');
 
-    static importStudents = async (data: {
-        students: {
-            id: string;
-            name: string;
-            class: string;
-        }[];
-        classes: {
-            name: string;
-            school: string;
-        }[];
-        schools: {
-            name: string;
-        }[];
-    }) => {
-        const response = await fetch('/user/student/import', {
+    static importStudents = async (
+        data: {
+            students: {
+                id: string;
+                name: string;
+                class: string;
+            }[];
+            classes: {
+                name: string;
+                school: string;
+            }[];
+            schools: {
+                name: string;
+            }[];
+        },
+        props: { serverEndpoint: string }
+    ) => {
+        const response = await fetch(`${props.serverEndpoint}/user/student/import`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -278,6 +295,17 @@ export class Student extends User {
             throw new Error(errorForbidden);
         } else {
             throw new Error(json.error);
+        }
+    };
+
+    static getStudentTickets = async (props: { serverEndpoint: string }) => {
+        const response = await fetch(`${props.serverEndpoint}/user/student/tickets`, {
+            headers: {
+                Authorization: getCookie('token') || '',
+            },
+        }), json = await response.json();
+        if (response.ok) {
+            return Ticket.fromJSONList(json);
         }
     };
 }

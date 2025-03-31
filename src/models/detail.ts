@@ -1,7 +1,7 @@
 import { getCookie } from '@utils/cookie';
 import { errorBadRequest, errorForbidden, errorInternal, errorNotFound } from '@utils/error-msg';
 
-export class ActivityDetail {
+export class Detail {
     id: string;
     activityId: string;
     name: string;
@@ -14,16 +14,16 @@ export class ActivityDetail {
         this.maxPoints = maxPoints;
     }
 
-    static fromJSON(json: any): ActivityDetail {
-        return new ActivityDetail(json.id, json.activity_id, json.name, json.maxPoints);
+    static fromJSON(json: any): Detail {
+        return new Detail(json.id, json.activity_id, json.name, json.maxPoints);
     }
 
-    static fromJSONList(json: any): ActivityDetail[] {
-        return json.map((item: any) => ActivityDetail.fromJSON(item));
+    static fromJSONList(json: any): Detail[] {
+        return json.map((item: any) => Detail.fromJSON(item));
     }
 
-    static template(): ActivityDetail {
-        return new ActivityDetail('', '', '', 0);
+    static template(): Detail {
+        return new Detail('', '', '', 0);
     }
 
     static list = async (activityId: string, props: { serverEndpoint?: string }) => {

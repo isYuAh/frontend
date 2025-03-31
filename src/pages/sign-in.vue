@@ -2,7 +2,7 @@
 import { ref, inject } from 'vue';
 import { useRouter } from 'vue-router';
 import { setTitle } from '@utils/title';
-import { Admin } from '@models/user';
+import { Admin, User } from '@models/user';
 import { setCookie } from '@utils/cookie';
 import { setStorageItem } from '@utils/storage';
 
@@ -28,10 +28,6 @@ const formData = defineModel<SignInFormData>('formData', {
         password: '',
     },
 });
-
-const gotoUnifiedIdentityAuth = () => {
-    // TODO: Redirect to unified identity authentication page
-};
 
 const handleSubmit = async () => {
     loading.value = true;
@@ -62,6 +58,37 @@ const handleSubmit = async () => {
         loading.value = false;
     }
 };
+
+const handleOAuth2Submit = async () => {
+    try {
+        const result = await User.signInOAuth2('2023212276', { serverEndpoint: 'http://127.0.0.1/api' });
+
+        // localhost env will prevent the browser from setting a persistent cookie
+        // so we need to set the cookie manually
+        if (window.location.host === '127.0.0.1:5173' || window.location.host === 'localhost:5173') {
+            setCookie('token', result.token);
+        }
+
+        if (result.student) {
+            setStorageItem('student', JSON.stringify(result.student));
+        } else {
+            setStorageItem('admin', JSON.stringify(result.admin));
+        }
+        setMessage({
+            type: 'success',
+            message: '登录成功',
+        });
+        setTimeout(() => {
+            router.push('/query-ticket');
+        }, 3000);
+    } catch (error) {
+        setMessage({
+            type: 'error',
+            message: error instanceof Error ? error.message : '登录失败，请检查账号和密码',
+        });
+        loading.value = false;
+    }
+};
 </script>
 
 <template>
@@ -69,7 +96,10 @@ const handleSubmit = async () => {
         <img src="/images/background.png" alt="Background" class="absolute z-0 h-full w-full object-cover opacity-75" />
         <div class="z-10 flex flex-1 items-center justify-center p-4">
             <div class="w-full max-w-md rounded-lg bg-white/95 p-8 shadow-lg dark:bg-gray-900/95">
-                <Logo class="mx-auto mb-8 h-12 text-white" />
+                <div class="mx-auto mb-8 flex items-center text-lg font-bold text-black dark:text-white">
+                    <Logo class="h-14" />
+                    <span>| 加分系统</span>
+                </div>
 
                 <div class="mb-6 text-center">
                     <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-100">用户登录</h2>
@@ -109,7 +139,7 @@ const handleSubmit = async () => {
                 </div>
                 <button
                     class="mx-auto block w-fit cursor-pointer rounded-full border border-gray-400 bg-white px-8 py-2 font-medium hover:bg-gray-100 dark:border-gray-600 dark:bg-gray-900 dark:hover:bg-gray-800"
-                    @click="gotoUnifiedIdentityAuth"
+                    @click="handleOAuth2Submit"
                 >
                     <span class="material-symbols-rounded align-middle">encrypted</span>
                     统一身份认证登录

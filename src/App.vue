@@ -4,6 +4,7 @@ import { ref, provide } from 'vue';
 import Toast from '@components/toast.vue';
 import DashboardSidebar from '@components/dashboard-sidebar.vue';
 import DashboardHeader from '@components/dashboard-header.vue';
+import AppHeader from '@components/app-header.vue';
 
 const route = useRoute();
 const isSignInPage = () => route.path === '/sign-in';
@@ -49,11 +50,8 @@ provide('banner', {
     </template>
 
     <template v-else>
-        <div class="container mx-auto py-4 text-center">
-            <!-- TODO: Header -->
-            <div class="nav-links"></div>
-            <router-view />
-        </div>
+        <AppHeader />
+        <router-view />
     </template>
 </template>
 
