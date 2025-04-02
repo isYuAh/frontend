@@ -21,6 +21,7 @@ export class Activity {
     state: ActivityState;
     owner: string;
     createdAt: GoodDate;
+    updatedAt: GoodDate;
     deletedAt: GoodDate | undefined;
 
     constructor(
@@ -32,6 +33,7 @@ export class Activity {
         state: ActivityState,
         owner: string,
         createdAt: string | GoodDate,
+        updatedAt: string | GoodDate,
         deletedAt?: string | GoodDate
     ) {
         this.id = id;
@@ -42,6 +44,7 @@ export class Activity {
         this.state = state;
         this.owner = owner;
         this.createdAt = typeof createdAt === 'string' ? GoodDate.fromString(createdAt) : createdAt;
+        this.updatedAt = typeof updatedAt === 'string' ? GoodDate.fromString(updatedAt) : updatedAt;
         this.deletedAt = deletedAt
             ? typeof deletedAt === 'string'
                 ? GoodDate.fromString(deletedAt)
@@ -59,6 +62,7 @@ export class Activity {
             json.state,
             json.owner,
             json.createdAt,
+            json.updatedAt || json.createdAt,
             json.deletedAt
         );
     }
@@ -67,7 +71,7 @@ export class Activity {
         return json.map((item: any) => Activity.fromJSON(item));
     }
 
-    static template = new Activity('', '', '', '', new GoodDate(), ActivityState.Draft, '', new GoodDate(), undefined);
+    static template = new Activity('', '', '', '', new GoodDate(), ActivityState.Draft, '', new GoodDate(), new GoodDate(), undefined);
 
     static list = async (limit: number, offset: number, props: { serverEndpoint?: string }) => {
         const response = await fetch(
