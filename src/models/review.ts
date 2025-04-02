@@ -11,6 +11,7 @@ export enum ReviewState {
 
 export class Review {
     id: string;
+    activityId: string;
     type: number;
     owner: string;
     instructor: string;
@@ -22,6 +23,7 @@ export class Review {
 
     constructor(
         id: string,
+        activityId: string,
         type: number,
         owner: string,
         instructor: string,
@@ -32,6 +34,7 @@ export class Review {
         updatedAt?: Date
     ) {
         this.id = id;
+        this.activityId = activityId;
         this.type = type;
         this.owner = owner;
         this.instructor = instructor;
@@ -45,6 +48,7 @@ export class Review {
     static fromJSON(json: any): Review {
         return new Review(
             json.id,
+            json.activityId,
             json.type,
             json.owner,
             json.instructor,
@@ -61,7 +65,7 @@ export class Review {
     }
 
     static template(): Review {
-        return new Review('', 0, '', '', '', '', '', 0);
+        return new Review('', '', 0, '', '', '', '', '', 0);
     }
 
     static list = async (activityId: string, props: { serverEndpoint?: string }) => {
