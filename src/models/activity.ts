@@ -62,7 +62,7 @@ export class Activity {
             json.state,
             json.owner,
             json.createdAt,
-            json.updatedAt || json.createdAt,
+            json.updatedAt,
             json.deletedAt
         );
     }
