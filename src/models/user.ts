@@ -1,10 +1,9 @@
-import { hashPassword } from '@utils/crypto';
 import { getCookie } from '@utils/cookie';
 import { GoodDate } from '@utils/datetime';
 import { errorBadRequest, errorForbidden, errorNotFound } from '@utils/error-msg';
 import { Ticket } from '@models/ticket';
 
-enum UserType {
+export enum UserType {
     UserSU,
     UserInstructor,
     UserLocalOrg,
@@ -14,7 +13,15 @@ enum UserType {
     UserStudent,
 }
 
-const UserTypeString = ['超级管理员', '指导老师', '院管组织', '院团委', '校级组织', '校团委'];
+const UserTypeString = ['超级管理员', '指导老师', '院管组织', '院团委', '校级组织', '校团委', "学生"];
+
+export const getUserTypeString = (type: any) => {
+    if (typeof type === 'string') {
+        return UserTypeString[parseInt(type)];
+    } else if (typeof type === 'number') {
+        return UserTypeString[type];
+    }
+};
 
 export class User {
     id: string;
@@ -61,7 +68,7 @@ export class User {
         } else {
             throw new Error(json.message);
         }
-    }
+    };
 }
 
 export class Admin extends User {
@@ -112,13 +119,11 @@ export class Admin extends User {
 
     static template = new Admin('', '', UserType.UserSU, '', '', '', new GoodDate(), undefined);
 
-    static listAdmin = async (limit: number, offset: number, type: UserType, props: { serverEndpoint?: string }) => {
-        const response = await fetch(
-            props.serverEndpoint + '/user/admin' + `?limit=${limit}&offset=${offset}&type=${type}`
-        );
+    static listAdmin = async (props: { serverEndpoint?: string }) => {
+        const response = await fetch(props.serverEndpoint + '/user/admin');
         const json = await response.json();
         if (response.ok) {
-            return Admin.fromJSONList(json);
+            return Admin.fromJSONList(json.data);
         } else if (response.status === 400) {
             throw new Error(errorBadRequest);
         } else {
@@ -130,7 +135,7 @@ export class Admin extends User {
         const response = await fetch(props.serverEndpoint + '/user/admin/' + id);
         const json = await response.json();
         if (response.ok) {
-            return Admin.fromJSON(json);
+            return Admin.fromJSON(json.data);
         } else if (response.status === 404) {
             throw new Error(errorNotFound);
         } else {
@@ -171,17 +176,13 @@ export class Admin extends User {
         id: string,
         data: {
             name: string;
-            type: UserType;
             description: string;
             password: string;
-            head: string;
+            type?: UserType;
+            head?: string;
         },
         props: { serverEndpoint?: string }
     ) => {
-        if (data.password !== '') {
-            data.password = await hashPassword(data.password);
-        }
-
         const response = await fetch(props.serverEndpoint + '/user/admin/update/' + id, {
             method: 'PUT',
             headers: {
@@ -300,10 +301,11 @@ export class Student extends User {
 
     static getStudentTickets = async (props: { serverEndpoint: string }) => {
         const response = await fetch(`${props.serverEndpoint}/user/student/tickets`, {
-            headers: {
-                Authorization: getCookie('token') || '',
-            },
-        }), json = await response.json();
+                headers: {
+                    Authorization: getCookie('token') || '',
+                },
+            }),
+            json = await response.json();
         if (response.ok) {
             return Ticket.fromJSONList(json);
         }

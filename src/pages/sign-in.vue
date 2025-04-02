@@ -124,7 +124,7 @@ const handleOAuth2Submit = async () => {
 
                     <button
                         type="submit"
-                        class="flex w-full cursor-pointer items-center justify-center rounded-md bg-blue-600 px-4 py-2 font-medium text-white transition duration-200 hover:bg-blue-700"
+                        class="bg-primary hover:bg-primary-600 dark:bg-primary-600 dark:hover:bg-primary-700 flex w-full cursor-pointer items-center justify-center rounded-md px-4 py-2 font-medium text-white transition duration-200"
                         :disabled="loading"
                     >
                         <Spinner size="md" v-if="loading" />
