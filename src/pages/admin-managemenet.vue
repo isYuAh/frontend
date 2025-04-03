@@ -4,6 +4,7 @@ import { Admin, getUserTypeString } from '@models/user';
 import { computed, inject, ref } from 'vue';
 import Spinner from '@components/spinner.vue';
 import AdminRow from '@/components/adminManagement/admin-row.vue';
+import { nanoid } from '@utils/crypto';
 
 const { setMessage } = inject('banner') as any;
 
@@ -21,18 +22,20 @@ let admins = ref<Model[]>([]),
     status = ref(0);
 let headChoices = computed(() => {
     return [
-        ...admins.value.filter(admin => admin.id !== '').map((admin) => {
-            return {
-                id: admin.id,
-                text: `${admin.name}（${getUserTypeString(admin.type)}）`,
-            }
-        }),
+        ...admins.value
+            .filter((admin) => admin.id !== '')
+            .map((admin) => {
+                return {
+                    label: `${admin.name}（${getUserTypeString(admin.type)}）`,
+                    value: admin.id,
+                };
+            }),
         {
-            id: '',
-            text: '❌ 无上级',
+            label: '❌ 无上级',
+            value: '',
         },
-    ]
-})
+    ];
+});
 const getAdmins = async () => {
     status.value = 0;
     try {
@@ -66,11 +69,11 @@ getAdmins();
 
 const addAdmin = () => {
     let newAdmin: Model = {
-        id: '',
+        id: 'new_' + nanoid(6),
         name: '',
         type: '0',
         password: '',
-        head: '0',
+        head: '',
     };
     admins.value.push(newAdmin);
     setTimeout(() => {
@@ -113,12 +116,12 @@ const addAdmin = () => {
                 </tr>
             </thead>
             <tbody>
-                <AdminRow 
-                v-for="admin in admins" 
-                :key="admin.id" 
-                :mode="'view'" 
-                :admin="admin"
-                :head-choice="headChoices"
+                <AdminRow
+                    v-for="admin in admins"
+                    :key="admin.id"
+                    :mode="'view'"
+                    :admin="admin"
+                    :head-choices="headChoices"
                 />
             </tbody>
         </table>
