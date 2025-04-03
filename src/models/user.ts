@@ -146,7 +146,7 @@ export class Admin extends User {
     static createAdmin = async (
         data: {
             name: string;
-            type: number;
+            type: string;
             password: string;
             head: string;
         },

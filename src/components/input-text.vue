@@ -8,7 +8,7 @@ const props = defineProps({
     },
     label: {
         type: String,
-        required: true,
+        required: false,
     },
     type: {
         type: String,
@@ -48,7 +48,7 @@ watch(
 
 <template>
     <div class="mb-4">
-        <label :for="id" class="mb-1.5 font-bold block text-sm text-gray-700 dark:text-gray-300">{{ label }}</label>
+        <label v-if="label" :for="id" class="mb-1.5 font-bold block text-sm text-gray-700 dark:text-gray-300">{{ label }}</label>
         <input
             :id="id"
             :type="type"
