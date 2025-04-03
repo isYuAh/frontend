@@ -28,11 +28,13 @@ let headChoices = computed(() => {
                 return {
                     label: `${admin.name}（${getUserTypeString(admin.type)}）`,
                     value: admin.id,
+                    level: Number(admin.type)
                 };
             }),
         {
             label: '❌ 无上级',
             value: '',
+            level: -1,
         },
     ];
 });
@@ -122,6 +124,7 @@ const addAdmin = () => {
                     :mode="'view'"
                     :admin="admin"
                     :head-choices="headChoices"
+                    @delete-temporary-admin="admins.splice(admins.indexOf(admin), 1)"
                 />
             </tbody>
         </table>

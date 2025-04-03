@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { Admin, getUserTypeString, UserType } from '@/models/user';
 import { devConfig } from '@/utils/devConfig';
-import { inject, ref } from 'vue';
+import { computed, inject, ref } from 'vue';
 import InputText from '@components/input-text.vue';
 import InputSelect from '@components/input-select.vue';
 
 const { setMessage } = inject('banner') as any;
-
+const emit = defineEmits(['deleteTemporaryAdmin']);
 const userTypeIterator = Object.entries(UserType)
     .filter(([_, k]) => !Number.isInteger(k))
     .map(([k, _]) => {
@@ -15,7 +15,11 @@ const userTypeIterator = Object.entries(UserType)
             value: k,
         };
     });
-
+const availableHeadChoices = computed(() => {
+   return props.headChoices.filter((choice) => {
+    return choice.level - Number(props.admin.type) === -1;
+   })
+})
 interface AdminView {
     id: string;
     name: string;
@@ -29,6 +33,7 @@ const props = defineProps<{
     headChoices: {
         label: string;
         value: string;
+        level: number;
     }[];
 }>();
 const editing = ref(props.admin.id.startsWith('new_'));
@@ -86,7 +91,7 @@ function handleSubmit() {
 function handleDelete() {
     if (!confirm('确认删除？')) return;
     if (props.admin.id.startsWith('new_')) {
-        // TODO:
+        emit('deleteTemporaryAdmin');
     } else {
         Admin.deleteAdmin(props.admin.id, {
             serverEndpoint: devConfig.serverEndpoint,
@@ -123,7 +128,7 @@ function handleDelete() {
                 }}
             </template>
             <template v-else>
-                <input-select class="mx-1 py-2" name="head" :options="headChoices" v-model="admin.head" />
+                <input-select class="mx-1 py-2" name="head" :options="availableHeadChoices" v-model="admin.head" />
             </template>
         </td>
         <td>
