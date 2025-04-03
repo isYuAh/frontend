@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { setTitle } from '@utils/title';
 import { Admin, getUserTypeString } from '@models/user';
-import { inject, ref } from 'vue';
+import { computed, inject, ref } from 'vue';
 import Spinner from '@components/spinner.vue';
+import AdminRow from '@/components/adminManagement/admin-row.vue';
+import { nanoid } from '@utils/crypto';
 
-const { setMessage } = inject('banner');
+const { setMessage } = inject('banner') as any;
 
 setTitle('管理管理员');
 
@@ -12,13 +14,30 @@ interface Model {
     id: string;
     name: string;
     type: string;
-    password: string | null;
+    password: string;
     head: string;
 }
 
 let admins = ref<Model[]>([]),
     status = ref(0);
-
+let headChoices = computed(() => {
+    return [
+        ...admins.value
+            .filter((admin) => admin.id !== '')
+            .map((admin) => {
+                return {
+                    label: `${admin.name}（${getUserTypeString(admin.type)}）`,
+                    value: admin.id,
+                    level: Number(admin.type)
+                };
+            }),
+        {
+            label: '❌ 无上级',
+            value: '',
+            level: -1,
+        },
+    ];
+});
 const getAdmins = async () => {
     status.value = 0;
     try {
@@ -30,7 +49,7 @@ const getAdmins = async () => {
                 id: admin.id,
                 name: admin.name,
                 type: admin.type.toString(),
-                password: null,
+                password: '',
                 head: admin.head,
             };
         });
@@ -44,25 +63,19 @@ const getAdmins = async () => {
             type: 'error',
             message: '无法获取管理员信息',
         });
-        console.log(e);
         status.value = 2;
     }
 };
 
 getAdmins();
 
-const getAdminHead = (head: string) => {
-    let admin = admins.value.find((admin) => admin.id === head);
-    return admin ? `${admin.name}（${getUserTypeString(admin.type)}）` : '错误 ❌（无上级）';
-};
-
 const addAdmin = () => {
-    let newAdmin = {
-        id: 'new',
+    let newAdmin: Model = {
+        id: 'new_' + nanoid(6),
         name: '',
         type: '0',
-        password: null,
-        head: '0',
+        password: '',
+        head: '',
     };
     admins.value.push(newAdmin);
     setTimeout(() => {
@@ -105,22 +118,14 @@ const addAdmin = () => {
                 </tr>
             </thead>
             <tbody>
-                <tr
+                <AdminRow
                     v-for="admin in admins"
                     :key="admin.id"
-                    class="border-b border-gray-300 bg-white dark:border-gray-700 dark:bg-gray-800"
-                >
-                    <th scope="row" class="px-6 py-4 font-medium whitespace-nowrap text-gray-900 dark:text-white">
-                        {{ admin.id }}
-                    </th>
-                    <td>{{ admin.name }}</td>
-                    <td>{{ getUserTypeString(admin.type) }}</td>
-                    <td>{{ getAdminHead(admin.head) }}</td>
-                    <td>{{ admin.password }}</td>
-                    <td>
-                        <a class="text-primary dark:text-primary-200 underline" :href="'/admin/' + admin.id">修改</a>
-                    </td>
-                </tr>
+                    :mode="'view'"
+                    :admin="admin"
+                    :head-choices="headChoices"
+                    @delete-temporary-admin="admins.splice(admins.indexOf(admin), 1)"
+                />
             </tbody>
         </table>
     </div>

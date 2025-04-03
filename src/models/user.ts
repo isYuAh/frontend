@@ -13,7 +13,7 @@ export enum UserType {
     UserStudent,
 }
 
-const UserTypeString = ['超级管理员', '指导老师', '院管组织', '院团委', '校级组织', '校团委', "学生"];
+const UserTypeString = ['超级管理员', '指导老师', '院管组织', '院团委', '校级组织', '校团委', '学生'];
 
 export const getUserTypeString = (type: any) => {
     if (typeof type === 'string') {
@@ -145,8 +145,9 @@ export class Admin extends User {
 
     static createAdmin = async (
         data: {
+            id: string;
             name: string;
-            type: number;
+            type: string;
             password: string;
             head: string;
         },

@@ -1,45 +1,24 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue';
 
-const props = defineProps({
-    id: {
-        type: String,
-        required: true,
-    },
-    label: {
-        type: String,
-        required: true,
-    },
-    type: {
-        type: String,
-        default: 'text',
-    },
-    placeholder: {
-        type: String,
-        default: '',
-    },
-    modelValue: {
-        type: String,
-        default: '',
-    },
-    tips: {
-        type: String,
-        default: '',
-    },
-});
+interface InputTextProps {
+    name: string;
+    label?: string;
+    type: string;
+    placeholder?: string;
+    modelValue?: string;
+    tips?: string;
+}
 
-const emit = defineEmits(['update:modelValue']);
+const { name, label, type, placeholder = '', modelValue = '', tips } = defineProps<InputTextProps>();
 
-const inputValue = ref(props.modelValue);
-
-// Update parent when input changes
+const emit = defineEmits(['update:modelValue']),
+    inputValue = ref(modelValue);
 watch(inputValue, (newValue) => {
     emit('update:modelValue', newValue);
 });
-
-// Update local value when parent changes
 watch(
-    () => props.modelValue,
+    () => modelValue,
     (newValue) => {
         inputValue.value = newValue;
     }
@@ -47,15 +26,17 @@ watch(
 </script>
 
 <template>
-    <div class="mb-4">
-        <label :for="id" class="mb-1.5 font-bold block text-sm text-gray-700 dark:text-gray-300">{{ label }}</label>
+    <div>
+        <label v-if="label" :for="name" class="mb-1.5 block text-sm font-bold text-gray-700 dark:text-gray-300">
+            {{ label }}
+        </label>
         <input
-            :id="id"
+            :name="name"
             :type="type"
             v-model="inputValue"
             :placeholder="placeholder"
-            class="w-full rounded-md border border-gray-300 text-sm px-4 py-2 pr-12 placeholder:text-gray-800 focus:border-transparent focus:ring-2 focus:ring-blue-500 focus:outline-none dark:placeholder:text-gray-300"
+            class="w-full rounded-md border border-gray-300 px-4 py-2 pr-12 text-sm placeholder:text-gray-800 focus:border-transparent focus:ring-2 focus:ring-blue-500 focus:outline-none dark:placeholder:text-gray-300"
         />
-        <p v-if="tips" class="mt-1 text-sm text-gray-600 dark:text-gray-400 font-medium">{{ tips }}</p>
+        <p v-if="tips" class="mt-1 text-sm font-medium text-gray-600 dark:text-gray-400">{{ tips }}</p>
     </div>
 </template>
