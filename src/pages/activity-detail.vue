@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { setTitle } from '@utils/title';
-import { ActivityDetail, ActivityState } from '@models/activity';
+import { ActivityState } from '@models/activity';
+import { ActivityDetail } from '@models/detail';
 import { inject, ref } from 'vue';
 import Spinner from '@components/spinner.vue';
 import DetailRow from '@components/detail-row.vue';

@@ -2,7 +2,7 @@
 import { devConfig } from '@utils/devConfig';
 import { inject, ref } from 'vue';
 import InputText from '@components/input-text.vue';
-import { ActivityDetail } from '@models/activity';
+import { ActivityDetail } from '@models/detail';
 
 const { setMessage } = inject('banner') as any;
 const emit = defineEmits(['deleteTemporaryDetail']);

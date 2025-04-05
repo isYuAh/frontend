@@ -53,7 +53,7 @@ export class User {
         }
     };
 
-    static signInOAuth2 = async (code: string, props: { serverEndpoint?: string }) => {
+    static signInOAuth2 = async (_: string, props: { serverEndpoint?: string }) => {
         const response = await fetch(props.serverEndpoint + '/user/oauth2/sign-in?code=2023212276', {
             headers: {
                 'Content-Type': 'application/json',

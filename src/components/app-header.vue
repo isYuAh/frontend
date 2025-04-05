@@ -4,7 +4,7 @@ import { User } from '@models/user';
 import { inject } from 'vue';
 import Logo from '@components/logo.vue';
 
-const { setMessage } = inject('banner');
+const { setMessage } = inject('banner') as any;
 
 const student = JSON.parse(getStorageItem('student') || '{}');
 let currentUser = student.name;

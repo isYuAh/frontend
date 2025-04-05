@@ -1,9 +1,6 @@
 <script lang="ts" setup>
 import { ActivityState, getActivityStateString } from '@models/activity';
-import { inject } from 'vue';
 import { GoodDate } from '@utils/datetime';
-
-const { setMessage } = inject('banner') as any;
 
 interface ActivityView {
     id: string;

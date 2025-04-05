@@ -7,7 +7,7 @@ import { inject, ref } from 'vue';
 import Spinner from '@components/spinner.vue';
 import InputTextarea from '@components/input-textarea.vue';
 
-const { setMessage } = inject('banner');
+const { setMessage } = inject('banner') as any;
 
 setTitle('个人资料');
 

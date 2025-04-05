@@ -10,7 +10,7 @@ import TextInput from '@components/input-text.vue';
 import Spinner from '@components/spinner.vue';
 import Logo from '@components/logo.vue';
 
-const { setMessage } = inject('banner');
+const { setMessage } = inject('banner') as any;
 
 setTitle('登录');
 

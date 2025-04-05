@@ -21,23 +21,23 @@ interface Model {
 let admins = ref<Model[]>([]),
     status = ref(0),
     headChoices = computed(() => {
-    return [
-        ...admins.value
-            .filter((admin) => admin.id !== '')
-            .map((admin) => {
-                return {
-                    label: `${admin.name}（${getUserTypeString(admin.type)}）`,
-                    value: admin.id,
-                    level: Number(admin.type),
-                };
-            }),
-        {
-            label: '❌ 无上级',
-            value: '',
-            level: -1,
-        },
-    ];
-});
+        return [
+            ...admins.value
+                .filter((admin) => admin.id !== '')
+                .map((admin) => {
+                    return {
+                        label: `${admin.name}（${getUserTypeString(admin.type)}）`,
+                        value: admin.id,
+                        level: Number(admin.type),
+                    };
+                }),
+            {
+                label: '❌ 无上级',
+                value: '',
+                level: -1,
+            },
+        ];
+    });
 
 const getAdmins = async () => {
     status.value = 0;
