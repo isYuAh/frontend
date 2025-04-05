@@ -1,5 +1,5 @@
-<script setup lang="ts">
-import { ref, inject } from 'vue';
+<script lang="ts" setup>
+import { inject, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { setTitle } from '@utils/title';
 import { Admin, User } from '@models/user';
@@ -93,7 +93,7 @@ const handleOAuth2Submit = async () => {
 
 <template>
     <div class="relative flex min-h-screen flex-col select-none">
-        <img src="/images/background.png" alt="Background" class="absolute z-0 h-full w-full object-cover opacity-75" />
+        <img alt="Background" class="absolute z-0 h-full w-full object-cover opacity-75" src="/images/background.png" />
         <div class="z-10 flex flex-1 items-center justify-center p-4">
             <div class="w-full max-w-md rounded-lg bg-white/95 p-8 shadow-lg dark:bg-gray-900/95">
                 <div class="mx-auto mb-8 flex items-center text-lg font-bold text-black dark:text-white">
@@ -105,29 +105,35 @@ const handleOAuth2Submit = async () => {
                     <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-100">用户登录</h2>
                 </div>
 
-                <form @submit.prevent="handleSubmit" class="space-y-6">
+                <form class="space-y-6" @submit.prevent="handleSubmit">
                     <div class="space-y-1">
-                        <TextInput id="name" label="用户名" v-model="formData.name" placeholder="请输入用户名" />
+                        <text-input
+                            v-model="formData.name"
+                            label="用户名"
+                            name="name"
+                            placeholder="请输入用户名"
+                            type="text"
+                        />
                     </div>
 
                     <div class="space-y-1">
                         <div class="relative">
-                            <TextInput
-                                id="password"
-                                label="用户密码"
+                            <text-input
                                 v-model="formData.password"
-                                type="password"
+                                label="用户密码"
+                                name="password"
                                 placeholder="请输入用户密码"
+                                type="password"
                             />
                         </div>
                     </div>
 
                     <button
-                        type="submit"
-                        class="bg-primary hover:bg-primary-600 dark:bg-primary-600 dark:hover:bg-primary-700 flex w-full cursor-pointer items-center justify-center rounded-md px-4 py-2 font-medium text-white transition duration-200"
                         :disabled="loading"
+                        class="bg-primary hover:bg-primary-600 dark:bg-primary-600 dark:hover:bg-primary-700 flex w-full cursor-pointer items-center justify-center rounded-md px-4 py-2 font-medium text-white transition duration-200"
+                        type="submit"
                     >
-                        <Spinner size="md" v-if="loading" />
+                        <Spinner v-if="loading" size="md" />
                         <span v-else>登录</span>
                     </button>
                 </form>

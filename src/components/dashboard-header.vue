@@ -28,7 +28,7 @@ const signOut = async () => {
 
 <template>
     <div class="flex items-center justify-between border-b border-gray-200 px-8 py-4 dark:border-gray-700">
-        <div class="text-primary-800 dark:text-primary-200 flex items-center font-bold">
+        <div draggable="false" class="text-primary-800 dark:text-primary-200 flex items-center font-bold select-none">
             <Logo class="h-10 pr-2" />
             <span>| 加分系统</span>
         </div>

@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import { getStorageItem, setStorageItem } from '@utils/storage';
 import { User } from '@models/user';
 import { inject } from 'vue';
@@ -24,7 +24,7 @@ const signOut = async () => {
 
 <template>
     <div class="flex items-center justify-between border-b border-gray-200 px-8 py-4 dark:border-gray-700">
-        <div class="text-primary-800 dark:text-primary-200 flex items-center font-bold">
+        <div class="text-primary-800 dark:text-primary-200 flex items-center font-bold select-none" draggable="false">
             <Logo class="h-10 pr-2" />
             <span>| 加分系统</span>
         </div>
@@ -32,11 +32,11 @@ const signOut = async () => {
             <template v-if="currentUser">
                 <span class="text-sm text-gray-600 dark:text-gray-400">欢迎回来，</span>
                 <span class="text-sm font-bold text-gray-800 dark:text-gray-300">{{ currentUser }} | </span>
-                <span @click="signOut" class="text-primary-800 dark:text-primary-200 cursor-pointer text-sm">登出</span>
+                <span class="text-primary-800 dark:text-primary-200 cursor-pointer text-sm" @click="signOut">登出</span>
             </template>
             <template v-else>
                 <span class="text-sm text-gray-600 dark:text-gray-400">未登录</span>
-                <router-link to="/sign-in" class="text-primary-800 dark:text-primary-200 cursor-pointer text-sm">
+                <router-link class="text-primary-800 dark:text-primary-200 cursor-pointer text-sm" to="/sign-in">
                     登录
                 </router-link>
             </template>

@@ -43,10 +43,11 @@ const sidebarItems: SidebarItem[] = [
                 :key="item.path"
                 :class="url === item.path ? 'bg-primary-200 dark:bg-primary-700' : ''"
                 :to="item.path"
-                class="hover:bg-primary-100 dark:hover:bg-primary-800 flex h-13 w-13 cursor-pointer items-center overflow-hidden rounded-full hover:w-fit"
+                draggable="false"
+                class="hover:bg-primary-100 dark:hover:bg-primary-800 flex h-13 w-13 cursor-pointer items-center overflow-hidden rounded-full select-none hover:w-fit"
             >
                 <span class="material-symbols-rounded w-7 px-3 text-3xl! leading-8">{{ item.icon }}</span>
-                <span class="ml-6 pr-4 text-sm font-bold text-gray-900 dark:text-white">{{ item.label }}</span>
+                <span class="ml-6 pr-4 font-bold text-gray-900 dark:text-white">{{ item.label }}</span>
             </router-link>
         </div>
     </div>
