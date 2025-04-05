@@ -49,7 +49,7 @@ provide('banner', {
         <transition name="fade">
             <div class="flex h-screen flex-col">
                 <app-header />
-                <div class="relative flex flex-1">
+                <div class="relative flex flex-1 overflow-hidden">
                     <DashboardSidebar />
                     <div class="flex flex-1 flex-col">
                         <router-view class="h-full flex-1 overflow-y-auto px-8" />

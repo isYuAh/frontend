@@ -4,6 +4,7 @@ import { getStorageItem } from '@utils/storage';
 import { UserType } from '@models/user';
 import Tabs from '@components/tabs.vue';
 import { ref } from 'vue';
+import ActivityManagement from '@pages/activity-management.vue';
 
 setTitle('活动管理页');
 
@@ -12,10 +13,13 @@ const tab = ref(0);
 const userType = JSON.parse(getStorageItem('admin') ?? '{}').type,
     tabs: string[] = [];
 
+let tabType: 0 | 1 | 2 = 0;
+
 switch (userType) {
     case UserType.UserOrg:
     case UserType.UserLocalOrg:
         tabs.push('加分条管理', '活动事项管理');
+        tabType = 0;
         break;
 }
 </script>
@@ -23,6 +27,6 @@ switch (userType) {
 <template>
     <div class="mx-auto w-full px-4">
         <Tabs v-model:tab="tab" :tabs="tabs" />
-
+        <ActivityManagement v-if="tabType === 0 && tab === 1" />
     </div>
 </template>
