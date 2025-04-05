@@ -65,16 +65,15 @@ body,
     --color-tertiary: #8b6f4e;
 }
 
-@layer utility {
-    .transitioned {
-        @apply transition-all duration-200;
-    }
-    button {
-        @apply transitioned;
-    }
+@utility transitioned {
+    @apply transition-all duration-200;
 }
 
-.markdown {
+@utility button {
+    @apply transitioned;
+}
+
+@utility.markdown {
     h1 {
         @apply mt-4 mb-8 text-3xl font-bold;
     }
