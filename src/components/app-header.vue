@@ -28,11 +28,13 @@ const signOut = async () => {
 </script>
 
 <template>
-    <div class="flex items-center justify-between border-b border-gray-200 px-8 py-4 dark:border-gray-700">
-        <div class="text-primary-800 dark:text-primary-200 flex items-center font-bold select-none" draggable="false">
+    <header
+        class="sticky top-0 z-40 flex items-center justify-between border-b border-gray-200 bg-white px-8 py-4 dark:border-gray-700 dark:bg-gray-900"
+    >
+        <router-link to="/" class="text-primary-800 dark:text-primary-200 flex items-center font-bold select-none">
             <Logo class="h-10 pr-2" />
             <span>| 加分系统</span>
-        </div>
+        </router-link>
         <div class="user">
             <template v-if="currentUser">
                 <span class="text-sm text-gray-600 dark:text-gray-400">欢迎回来，</span>
@@ -46,5 +48,5 @@ const signOut = async () => {
                 </router-link>
             </template>
         </div>
-    </div>
+    </header>
 </template>

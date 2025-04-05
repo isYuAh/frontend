@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import { ref, watch } from 'vue';
 
 interface SelectOptions {
@@ -33,11 +33,16 @@ watch(
             {{ label }}
         </label>
         <select
-            :name="name"
             v-model="inputValue"
+            :name="name"
             class="w-full rounded-md border border-gray-300 px-4 py-2 pr-12 text-sm placeholder:text-gray-800 focus:border-transparent focus:ring-2 focus:ring-blue-500 focus:outline-none dark:placeholder:text-gray-300"
         >
-            <option v-for="option in options" :key="option.value" :value="option.value">
+            <option
+                v-for="option in options"
+                :key="option.value"
+                :value="option.value"
+                class="bg-white dark:bg-gray-800"
+            >
                 {{ option.label }}
             </option>
         </select>

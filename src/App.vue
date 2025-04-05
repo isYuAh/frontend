@@ -5,6 +5,7 @@ import Toast from '@components/toast.vue';
 import DashboardSidebar from '@components/dashboard-sidebar.vue';
 import DashboardHeader from '@components/dashboard-header.vue';
 import AppHeader from '@components/app-header.vue';
+import AppFooter from '@components/app-footer.vue';
 
 const route = useRoute();
 const isSignInPage = () => route.path === '/sign-in';
@@ -30,30 +31,43 @@ provide('banner', {
 </script>
 
 <template>
-    <Toast
-        v-if="bannerMessage"
-        :message="bannerMessage.message"
-        :type="bannerMessage.type"
-        @close="setBannerMessage(null)"
-    />
+    <transition name="fade">
+        <Toast
+            v-if="bannerMessage"
+            :message="bannerMessage.message"
+            :type="bannerMessage.type"
+            @close="setBannerMessage(null)"
+        />
+    </transition>
 
     <template v-if="isSignInPage()">
-        <router-view />
+        <transition name="fade">
+            <router-view />
+        </transition>
     </template>
 
     <template v-else-if="isDashboardPage()">
-        <div class="flex h-screen flex-col">
-            <DashboardHeader />
-            <div class="relative flex flex-1">
-                <DashboardSidebar class="absolute" />
-                <router-view class="ml-22 h-full border-l border-gray-200 p-8 dark:border-gray-700" />
+        <transition name="fade">
+            <div class="flex h-screen flex-col">
+                <DashboardHeader />
+                <div class="relative flex flex-1">
+                    <DashboardSidebar class="absolute" />
+                    <router-view class="ml-22 h-full border-l border-gray-200 p-8 dark:border-gray-700" />
+                </div>
             </div>
-        </div>
+        </transition>
     </template>
 
     <template v-else>
-        <AppHeader />
-        <router-view />
+        <transition name="fade">
+            <div class="flex min-h-screen flex-col">
+                <app-header />
+                <main class="flex-1">
+                    <router-view />
+                </main>
+                <app-footer />
+            </div>
+        </transition>
     </template>
 </template>
 

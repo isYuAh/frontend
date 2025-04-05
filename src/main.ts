@@ -5,6 +5,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 
 // Lazy-loading
 const HomePage = () => import('@pages/home.vue');
+const AboutPage = () => import('@pages/about.vue');
 const SignInPage = () => import('@pages/sign-in.vue');
 const DashboardHomePage = () => import('@pages/dashboard-home.vue');
 const DashboardAdminPage = () => import('@pages/dashboard-admin.vue');
@@ -14,6 +15,7 @@ const QueryTicketPage = () => import('@pages/query-ticket.vue');
 
 const routes = [
     { path: '/', component: HomePage },
+    { path: '/about', component: AboutPage },
     { path: '/sign-in', component: SignInPage },
     { path: '/dashboard', component: DashboardHomePage },
     { path: '/dashboard/admin', component: DashboardAdminPage },

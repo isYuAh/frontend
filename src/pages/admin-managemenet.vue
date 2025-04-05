@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import { setTitle } from '@utils/title';
 import { Admin, getUserTypeString } from '@models/user';
 import { computed, inject, ref } from 'vue';
@@ -98,32 +98,32 @@ const addAdmin = () => {
                 管理员列表
                 <p class="mt-1 text-sm font-normal text-gray-500 dark:text-gray-400">
                     浏览、编辑管理员。
-                    <a @click.prevent="addAdmin" href="?" class="text-primary dark:text-primary-200 underline">
+                    <a class="text-primary dark:text-primary-200 underline" href="?" @click.prevent="addAdmin">
                         添加一个新管理员
                     </a>
                     或者
-                    <a @click.prevent="getAdmins" class="text-primary dark:text-primary-200 underline" href="?">
+                    <a class="text-primary dark:text-primary-200 underline" href="?" @click.prevent="getAdmins">
                         重新加载（这会丢失未提交的数据）
                     </a>
                 </p>
             </caption>
             <thead class="bg-gray-100 text-xs text-gray-700 uppercase dark:bg-gray-700 dark:text-gray-400">
                 <tr>
-                    <th scope="col" class="px-6 py-3">ID</th>
-                    <th scope="col" class="px-6 py-3">名称</th>
-                    <th scope="col" class="px-6 py-3">类型</th>
-                    <th scope="col" class="px-6 py-3">上级</th>
-                    <th scope="col" class="px-6 py-3">密码</th>
-                    <th scope="col" class="px-6 py-3">操作</th>
+                    <th class="px-6 py-3" scope="col">ID</th>
+                    <th class="px-6 py-3" scope="col">名称</th>
+                    <th class="px-6 py-3" scope="col">类型</th>
+                    <th class="px-6 py-3" scope="col">上级</th>
+                    <th class="px-6 py-3" scope="col">密码</th>
+                    <th class="px-6 py-3" scope="col">操作</th>
                 </tr>
             </thead>
             <tbody>
                 <AdminRow
                     v-for="admin in admins"
                     :key="admin.id"
-                    :mode="'view'"
                     :admin="admin"
                     :head-choices="headChoices"
+                    :mode="'view'"
                     @delete-temporary-admin="admins.splice(admins.indexOf(admin), 1)"
                 />
             </tbody>
