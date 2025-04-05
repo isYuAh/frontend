@@ -1,5 +1,6 @@
 import { getCookie } from '@utils/cookie';
 import { errorBadRequest, errorForbidden, errorInternal, errorNotFound } from '@utils/error-msg';
+import type { Response, SuccessResponse } from '@/types/response';
 
 export enum ReviewState {
     ReviewInstructorPending,
@@ -133,6 +134,36 @@ export class Review {
             throw new Error(errorInternal);
         } else {
             throw new Error(json.error);
+        }
+    };
+
+    static listByReviewerId = async ({offset = 0, limit = 20, type = '-1', state = '-1'}: {
+        offset?: number;
+        limit?: number;
+        type?: string;
+        state?: string;
+    }, props: { serverEndpoint?: string }) => {
+        const uri = new URL(props.serverEndpoint + '/activity/review/reviewer');
+        uri.searchParams.append('offset', offset.toString())
+        uri.searchParams.append('limit', limit.toString())
+        uri.searchParams.append('type', type)
+        uri.searchParams.append('state', state)
+        const response = await fetch(uri, {
+            method: 'GET',
+            headers: {
+                Authorization: getCookie('token') || '',
+            },
+        });
+        const json = await response.json() as Response<Review[]>;
+
+        if (response.ok) {
+            return json as SuccessResponse<Review[]>;
+        } else if (response.status === 404) {
+            throw new Error(errorNotFound);
+        } else if (response.status === 500) {
+            throw new Error(errorInternal);
+        } else {
+            throw new Error((json as any).error);
         }
     };
 }
