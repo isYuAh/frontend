@@ -3,7 +3,7 @@ import { setTitle } from '@utils/title';
 import { Admin, getUserTypeString } from '@models/user';
 import { computed, inject, ref } from 'vue';
 import Spinner from '@components/spinner.vue';
-import AdminRow from '@/components/adminManagement/admin-row.vue';
+import AdminRow from '@components/admin-row.vue';
 import { nanoid } from '@utils/crypto';
 
 const { setMessage } = inject('banner') as any;
@@ -28,7 +28,7 @@ let headChoices = computed(() => {
                 return {
                     label: `${admin.name}（${getUserTypeString(admin.type)}）`,
                     value: admin.id,
-                    level: Number(admin.type)
+                    level: Number(admin.type),
                 };
             }),
         {

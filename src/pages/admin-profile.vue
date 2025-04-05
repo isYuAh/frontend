@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import { setTitle } from '@utils/title';
 import InputText from '@components/input-text.vue';
 import { Admin } from '@models/user';
@@ -81,23 +81,23 @@ const onSubmit = async () => {
 <template>
     <h2 class="mb-4 text-2xl font-black">个人资料</h2>
     <Spinner v-if="status === 0" />
-    <div v-if="status !== 2" class="lg:flex lg:w-full lg:items-start lg:space-x-8 ">
-        <form @submit.prevent="onSubmit" class="w-md">
-            <input-text id="name" label="名称" placeholder="请输入名称……" v-model="admin.name" />
-            <input-textarea id="description" label="简介" placeholder="请输入简介……" v-model="admin.description" />
+    <div v-if="status !== 2" class="lg:flex lg:w-full lg:items-start lg:space-x-8">
+        <form class="w-md space-y-2" @submit.prevent="onSubmit">
+            <input-text v-model="admin.name" label="名称" name="name" placeholder="请输入名称……" type="text" />
+            <input-textarea v-model="admin.description" label="简介" name="description" placeholder="请输入简介……" />
             <input-text
-                id="password"
+                v-model="admin.password"
                 label="密码"
+                name="password"
                 placeholder="请输入密码……"
                 type="password"
-                v-model="admin.password"
             />
             <button
-                type="submit"
-                class="bg-primary hover:bg-primary-600 dark:bg-primary-600 dark:hover:bg-primary-700 flex w-full cursor-pointer items-center justify-center rounded-md px-4 py-2 font-medium text-white transition duration-200"
                 :disabled="status === 0"
+                class="bg-primary hover:bg-primary-600 dark:bg-primary-600 dark:hover:bg-primary-700 mt-4 flex w-full cursor-pointer items-center justify-center rounded-md px-4 py-2 font-medium text-white transition duration-200"
+                type="submit"
             >
-                <Spinner size="md" v-if="status === 0" />
+                <Spinner v-if="status === 0" size="md" />
                 <span v-else>保存</span>
             </button>
         </form>

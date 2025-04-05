@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { Admin, getUserTypeString, UserType } from '@/models/user';
-import { devConfig } from '@/utils/devConfig';
+import { Admin, getUserTypeString, UserType } from '@models/user';
+import { devConfig } from '@utils/devConfig';
 import { computed, inject, ref } from 'vue';
 import InputText from '@components/input-text.vue';
 import InputSelect from '@components/input-select.vue';
@@ -16,10 +16,10 @@ const userTypeIterator = Object.entries(UserType)
         };
     });
 const availableHeadChoices = computed(() => {
-   return props.headChoices.filter((choice) => {
-    return choice.level - Number(props.admin.type) === -1;
-   })
-})
+    return props.headChoices.filter((choice) => {
+        return choice.level - Number(props.admin.type) === -1;
+    });
+});
 interface AdminView {
     id: string;
     name: string;

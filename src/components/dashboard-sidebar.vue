@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import { computed } from 'vue';
 import { useRoute } from 'vue-router';
 
@@ -37,15 +37,16 @@ const sidebarItems: SidebarItem[] = [
 
 <template>
     <div class="flex flex-col justify-between space-y-4 p-4">
-        <div class="actions flex flex-col space-y-2">
+        <div class="flex flex-col space-y-2">
             <router-link
                 v-for="item in sidebarItems"
                 :key="item.path"
-                :to="item.path"
                 :class="url === item.path ? 'bg-primary-200 dark:bg-primary-700' : ''"
-                class="hover:bg-primary-100 dark:hover:bg-primary-800 h-13 w-13 cursor-pointer rounded-full p-2.5"
+                :to="item.path"
+                class="hover:bg-primary-100 dark:hover:bg-primary-800 flex h-13 w-13 cursor-pointer items-center overflow-hidden rounded-full hover:w-fit"
             >
-                <span class="material-symbols-rounded text-3xl! leading-8">{{ item.icon }}</span>
+                <span class="material-symbols-rounded w-7 px-3 text-3xl! leading-8">{{ item.icon }}</span>
+                <span class="ml-6 pr-4 text-sm font-bold text-gray-900 dark:text-white">{{ item.label }}</span>
             </router-link>
         </div>
     </div>

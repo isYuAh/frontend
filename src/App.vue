@@ -1,6 +1,6 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import { useRoute } from 'vue-router';
-import { ref, provide } from 'vue';
+import { provide, ref } from 'vue';
 import Toast from '@components/toast.vue';
 import DashboardSidebar from '@components/dashboard-sidebar.vue';
 import DashboardHeader from '@components/dashboard-header.vue';
@@ -42,10 +42,12 @@ provide('banner', {
     </template>
 
     <template v-else-if="isDashboardPage()">
-        <DashboardHeader />
-        <div class="flex">
-            <DashboardSidebar />
-            <router-view class="flex-1 p-8" />
+        <div class="flex h-screen flex-col">
+            <DashboardHeader />
+            <div class="relative flex flex-1">
+                <DashboardSidebar class="absolute" />
+                <router-view class="ml-22 h-full border-l border-gray-200 p-8 dark:border-gray-700" />
+            </div>
         </div>
     </template>
 
