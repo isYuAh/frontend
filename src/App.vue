@@ -3,7 +3,6 @@ import { useRoute } from 'vue-router';
 import { provide, ref } from 'vue';
 import Toast from '@components/toast.vue';
 import DashboardSidebar from '@components/dashboard-sidebar.vue';
-import DashboardHeader from '@components/dashboard-header.vue';
 import AppHeader from '@components/app-header.vue';
 import AppFooter from '@components/app-footer.vue';
 
@@ -49,10 +48,13 @@ provide('banner', {
     <template v-else-if="isDashboardPage()">
         <transition name="fade">
             <div class="flex h-screen flex-col">
-                <DashboardHeader />
+                <app-header />
                 <div class="relative flex flex-1">
-                    <DashboardSidebar class="absolute" />
-                    <router-view class="ml-22 h-full border-l border-gray-200 p-8 dark:border-gray-700" />
+                    <DashboardSidebar />
+                    <div class="flex flex-1 flex-col">
+                        <router-view class="h-full flex-1 overflow-y-auto px-8" />
+                        <app-footer class="w-full border-t border-gray-200 dark:border-gray-700" />
+                    </div>
                 </div>
             </div>
         </transition>

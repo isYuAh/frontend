@@ -1,22 +1,50 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
-body, #app {
+body,
+#app {
     margin: 0;
     min-height: 100vh;
     font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    scrollbar-width: thin;
+    scrollbar-color: var(--dynamic-600) var(--dynamic-200);
 }
 
 @media (prefers-color-scheme: dark) {
     :root {
-        @apply text-white bg-gray-900;
+        @apply bg-gray-900 text-white;
+        --dynamic-50: var(--color-gray-950);
+        --dynamic-100: var(--color-gray-900);
+        --dynamic-200: var(--color-gray-800);
+        --dynamic-300: var(--color-gray-700);
+        --dynamic-400: var(--color-gray-600);
+        --dynamic-500: var(--color-gray-500);
+        --dynamic-600: var(--color-gray-400);
+        --dynamic-700: var(--color-gray-300);
+        --dynamic-800: var(--color-gray-200);
+        --dynamic-900: var(--color-gray-100);
+        --dynamic-950: var(--color-gray-50);
     }
 }
 
 @media (prefers-color-scheme: light) {
     :root {
-        @apply text-gray-900 bg-white;
+        @apply bg-white text-gray-900;
+    }
+
+    @theme {
+        --dynamic-50: var(--color-gray-50);
+        --dynamic-100: var(--color-gray-100);
+        --dynamic-200: var(--color-gray-200);
+        --dynamic-300: var(--color-gray-300);
+        --dynamic-400: var(--color-gray-400);
+        --dynamic-500: var(--color-gray-500);
+        --dynamic-600: var(--color-gray-600);
+        --dynamic-700: var(--color-gray-700);
+        --dynamic-800: var(--color-gray-800);
+        --dynamic-900: var(--color-gray-900);
+        --dynamic-950: var(--color-gray-950);
     }
 }
 
@@ -34,28 +62,37 @@ body, #app {
     --color-primary-950: #082f49;
     --color-primary: #235a78;
     --color-secondary: #a72126;
-    --color-tertiary: #8B6F4E;
+    --color-tertiary: #8b6f4e;
+}
+
+@layer utility {
+    .transitioned {
+        @apply transition-all duration-200;
+    }
+    button {
+        @apply transitioned;
+    }
 }
 
 .markdown {
     h1 {
-        @apply text-3xl font-bold mb-8 mt-4;
+        @apply mt-4 mb-8 text-3xl font-bold;
     }
 
     h2 {
-        @apply text-2xl font-bold mb-6 mt-3;
+        @apply mt-3 mb-6 text-2xl font-bold;
     }
 
     h3 {
-        @apply text-xl font-bold mb-4 mt-2;
+        @apply mt-2 mb-4 text-xl font-bold;
     }
 
     h4 {
-        @apply text-lg font-bold mb-2 mt-1;
+        @apply mt-1 mb-2 text-lg font-bold;
     }
 
     h5 {
-        @apply text-base font-bold mb-2 mt-1;
+        @apply mt-1 mb-2 text-base font-bold;
     }
 
     h6 {
@@ -63,7 +100,7 @@ body, #app {
     }
 
     p {
-        @apply text-base mb-2;
+        @apply mb-2 text-base;
     }
 
     ul {
@@ -79,11 +116,11 @@ body, #app {
     }
 
     blockquote {
-        @apply border-l-4 border-gray-300 pl-4 italic text-gray-600;
+        @apply border-l-4 border-gray-300 pl-4 text-gray-600 italic;
     }
 
     code {
-        @apply bg-gray-100 px-1 py-0.5 rounded;
+        @apply rounded bg-gray-100 px-1 py-0.5;
     }
 }
 

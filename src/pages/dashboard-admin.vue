@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import { setTitle } from '@utils/title';
 import { getStorageItem } from '@utils/storage';
 import { UserType } from '@models/user';
@@ -17,13 +17,8 @@ const isSU = JSON.parse(getStorageItem('admin') ?? '{}').type === UserType.UserS
 
 <template>
     <div class="mx-auto w-full px-4">
-        <Tabs :tabs="tabs" v-model:tab="tab" />
-
-        <div v-if="isSU && tab === 1">
-            <AdminManagemenet />
-        </div>
-        <div v-else-if="tab === 0">
-            <AdminProfile />
-        </div>
+        <Tabs v-model:tab="tab" :tabs="tabs" />
+        <AdminManagemenet v-if="isSU && tab === 1" />
+        <AdminProfile v-else-if="tab === 0" />
     </div>
 </template>

@@ -104,13 +104,7 @@ const handleOAuth2Submit = async () => {
 
         <form class="space-y-6" @submit.prevent="handleSubmit">
             <div class="space-y-1">
-                <text-input
-                    v-model="formData.name"
-                    label="用户名"
-                    name="name"
-                    placeholder="请输入用户名"
-                    type="text"
-                />
+                <text-input v-model="formData.name" label="用户名" name="name" placeholder="请输入用户名" type="text" />
             </div>
 
             <div class="space-y-1">
