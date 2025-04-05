@@ -6,7 +6,7 @@ interface InputTextProps {
     label?: string;
     type: string;
     placeholder?: string;
-    modelValue?: string;
+    modelValue?: string | number;
     tips?: string;
 }
 

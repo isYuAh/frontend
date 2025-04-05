@@ -19,8 +19,8 @@ interface Model {
 }
 
 let admins = ref<Model[]>([]),
-    status = ref(0);
-let headChoices = computed(() => {
+    status = ref(0),
+    headChoices = computed(() => {
     return [
         ...admins.value
             .filter((admin) => admin.id !== '')
@@ -38,6 +38,7 @@ let headChoices = computed(() => {
         },
     ];
 });
+
 const getAdmins = async () => {
     status.value = 0;
     try {
@@ -123,7 +124,6 @@ const addAdmin = () => {
                     :key="admin.id"
                     :admin="admin"
                     :head-choices="headChoices"
-                    :mode="'view'"
                     @delete-temporary-admin="admins.splice(admins.indexOf(admin), 1)"
                 />
             </tbody>
