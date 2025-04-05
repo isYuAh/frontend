@@ -16,7 +16,7 @@ const isSU = JSON.parse(getStorageItem('admin') ?? '{}').type === UserType.UserS
 </script>
 
 <template>
-    <div class="px-4 w-3/4 max-w-6xl mx-auto">
+    <div class="mx-auto w-3/4 max-w-6xl px-4">
         <Tabs :tabs="tabs" v-model:tab="tab" />
 
         <div v-if="isSU && tab === 1">

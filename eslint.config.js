@@ -1,5 +1,5 @@
-import pluginVue from 'eslint-plugin-vue'
-import globals from 'globals'
+import pluginVue from 'eslint-plugin-vue';
+import globals from 'globals';
 
 export default [
     ...pluginVue.configs['vue3-recommended'],
@@ -11,8 +11,8 @@ export default [
         languageOptions: {
             sourceType: 'module',
             globals: {
-                ...globals.browser
-            }
-        }
-    }
-]
+                ...globals.browser,
+            },
+        },
+    },
+];

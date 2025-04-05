@@ -9,7 +9,7 @@ export enum ActivityState {
     Rejected = 3,
     TicketPending = 4,
     TicketApproved = 5,
-    TicketRejected = 6
+    TicketRejected = 6,
 }
 
 export class Activity {
@@ -71,17 +71,26 @@ export class Activity {
         return json.map((item: any) => Activity.fromJSON(item));
     }
 
-    static template = new Activity('', '', '', '', new GoodDate(), ActivityState.Draft, '', new GoodDate(), new GoodDate(), undefined);
+    static template = new Activity(
+        '',
+        '',
+        '',
+        '',
+        new GoodDate(),
+        ActivityState.Draft,
+        '',
+        new GoodDate(),
+        new GoodDate(),
+        undefined
+    );
 
     static list = async (limit: number, offset: number, props: { serverEndpoint?: string }) => {
-        const response = await fetch(
-            props.serverEndpoint + '/activity' + `?limit=${limit}&offset=${offset}`
-        );
+        const response = await fetch(props.serverEndpoint + '/activity' + `?limit=${limit}&offset=${offset}`);
         const json = await response.json();
         if (response.ok) {
             return Activity.fromJSONList(json);
         } else if (response.status === 400) {
-          throw new Error(errorBadRequest);
+            throw new Error(errorBadRequest);
         } else if (response.status === 403) {
             throw new Error(errorForbidden);
         } else if (response.status === 404) {
@@ -136,7 +145,7 @@ export class Activity {
         } else if (response.status === 403) {
             throw new Error(errorForbidden);
         } else if (response.status === 400) {
-          throw new Error(errorBadRequest);
+            throw new Error(errorBadRequest);
         } else if (response.status === 500) {
             throw new Error(errorInternal);
         } else {

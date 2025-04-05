@@ -52,17 +52,14 @@ export class Detail {
         },
         props: { serverEndpoint?: string }
     ) => {
-        const response = await fetch(
-            props.serverEndpoint + '/activity/' + activityId + '/detail/new',
-            {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: getCookie('token') || '',
-                },
-                body: JSON.stringify(data),
-            }
-        );
+        const response = await fetch(props.serverEndpoint + '/activity/' + activityId + '/detail/new', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: getCookie('token') || '',
+            },
+            body: JSON.stringify(data),
+        });
         const json = await response.json();
 
         if (response.ok) {
@@ -79,15 +76,12 @@ export class Detail {
     };
 
     static delete = async (activityId: string, detailId: string, props: { serverEndpoint?: string }) => {
-        const response = await fetch(
-            props.serverEndpoint + '/activity/' + activityId + '/detail/' + detailId,
-            {
-                method: 'DELETE',
-                headers: {
-                    Authorization: getCookie('token') || '',
-                },
-            }
-        );
+        const response = await fetch(props.serverEndpoint + '/activity/' + activityId + '/detail/' + detailId, {
+            method: 'DELETE',
+            headers: {
+                Authorization: getCookie('token') || '',
+            },
+        });
 
         const json = await response.json();
 

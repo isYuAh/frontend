@@ -6,7 +6,7 @@ export enum ReviewState {
     ReviewInstructorRejected,
     ReviewCommitteePending,
     ReviewCommitteeApproved,
-    ReviewCommitteeRejected
+    ReviewCommitteeRejected,
 }
 
 export class Review {
@@ -92,17 +92,14 @@ export class Review {
         data: { state: boolean; comment: string },
         props: { serverEndpoint?: string }
     ) => {
-        const response = await fetch(
-            props.serverEndpoint + '/activity/' + activityId + '/review/' + reviewId,
-            {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: getCookie('token') || '',
-                },
-                body: JSON.stringify(data),
-            }
-        );
+        const response = await fetch(props.serverEndpoint + '/activity/' + activityId + '/review/' + reviewId, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: getCookie('token') || '',
+            },
+            body: JSON.stringify(data),
+        });
         const json = await response.json();
 
         if (response.ok) {
@@ -120,20 +117,14 @@ export class Review {
         }
     };
 
-    static create = async (
-        activityId: string,
-        props: { serverEndpoint?: string }
-    ) => {
-        const response = await fetch(
-            props.serverEndpoint + '/activity/' + activityId + '/review/new',
-            {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: getCookie('token') || '',
-                },
-            }
-        );
+    static create = async (activityId: string, props: { serverEndpoint?: string }) => {
+        const response = await fetch(props.serverEndpoint + '/activity/' + activityId + '/review/new', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: getCookie('token') || '',
+            },
+        });
         const json = await response.json();
 
         if (response.ok) {

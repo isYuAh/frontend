@@ -19,12 +19,12 @@ const hashPasswordRaw = async (password: string): Promise<ArrayBuffer> => {
     const encoder = new TextEncoder();
     const data = encoder.encode(password);
     return crypto.subtle.digest('SHA-256', data);
-}
+};
 
 export async function hashPassword(password: string): Promise<string> {
     const hashBuffer = await hashPasswordRaw(password);
     const hashArray = Array.from(new Uint8Array(hashBuffer));
-    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    return hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
 }
 
 // encryptCredential
@@ -36,18 +36,12 @@ export async function encryptCredential(credential: string, key: string): Promis
     const keyBuffer = new Uint8Array(hashedKeyRaw);
     const credentialBuffer = new TextEncoder().encode(credential);
 
-    const cryptoKey = await crypto.subtle.importKey(
-        "raw",
-        keyBuffer,
-        { name: "AES-GCM" },
-        false,
-        ["encrypt"]
-    );
+    const cryptoKey = await crypto.subtle.importKey('raw', keyBuffer, { name: 'AES-GCM' }, false, ['encrypt']);
 
     const encrypted = await crypto.subtle.encrypt(
         {
-            name: "AES-GCM",
-            iv: iv
+            name: 'AES-GCM',
+            iv: iv,
         },
         cryptoKey,
         credentialBuffer
@@ -55,7 +49,7 @@ export async function encryptCredential(credential: string, key: string): Promis
 
     return JSON.stringify({
         iv: Array.from(iv),
-        encrypted: Array.from(new Uint8Array(encrypted))
+        encrypted: Array.from(new Uint8Array(encrypted)),
     });
 }
 
@@ -69,18 +63,12 @@ export async function decryptCredential(encryptedCredential: string, key: string
     const ivBuffer = new Uint8Array(iv);
     const encryptedBuffer = new Uint8Array(encrypted);
 
-    const cryptoKey = await crypto.subtle.importKey(
-        "raw",
-        keyBuffer,
-        { name: "AES-GCM" },
-        false,
-        ["decrypt"]
-    );
+    const cryptoKey = await crypto.subtle.importKey('raw', keyBuffer, { name: 'AES-GCM' }, false, ['decrypt']);
 
     const decrypted = await crypto.subtle.decrypt(
         {
-            name: "AES-GCM",
-            iv: ivBuffer
+            name: 'AES-GCM',
+            iv: ivBuffer,
         },
         cryptoKey,
         encryptedBuffer
