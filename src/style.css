@@ -33,4 +33,6 @@ body, #app {
     --color-primary-900: #0c4a6e;
     --color-primary-950: #082f49;
     --color-primary: #235a78;
+    --color-secondary: #a72126;
+    --color-tertiary: #8B6F4E;
 }

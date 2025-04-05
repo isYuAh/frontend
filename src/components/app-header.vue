@@ -6,12 +6,17 @@ import Logo from '@components/logo.vue';
 
 const { setMessage } = inject('banner');
 
-const student = JSON.parse(getStorageItem('student') || '{}'),
-    currentUser = student.name;
+const student = JSON.parse(getStorageItem('student') || '{}');
+let currentUser = student.name;
+if (!currentUser) {
+    const admin = JSON.parse(getStorageItem('admin') || '{}');
+    currentUser = admin.name;
+}
 
 const signOut = async () => {
     if (confirm('确定登出系统？')) {
         setStorageItem('student', '');
+        setStorageItem('admin', '');
         if (await User.signOut({ serverEndpoint: 'http://127.0.0.1/api' })) {
             setMessage({ message: '已登出', type: 'success' });
             setTimeout(() => {
