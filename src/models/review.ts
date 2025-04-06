@@ -1,5 +1,6 @@
 import { getCookie } from '@utils/cookie';
 import { errorBadRequest, errorForbidden, errorInternal, errorNotFound } from '@utils/error-msg';
+import { GoodDate } from '@utils/datetime';
 
 export enum ReviewState {
     ReviewInstructorPending,
@@ -19,7 +20,7 @@ export class Review {
     committee: string;
     committeeComment: string;
     state: ReviewState;
-    updatedAt?: Date;
+    updatedAt?: GoodDate;
 
     constructor(
         id: string,
@@ -31,7 +32,7 @@ export class Review {
         committee: string,
         committeeComment: string,
         state: number,
-        updatedAt?: Date
+        updatedAt?: GoodDate
     ) {
         this.id = id;
         this.activityId = activityId;
@@ -56,7 +57,7 @@ export class Review {
             json.committee,
             json.committeeComment,
             json.state,
-            json.updatedAt ? new Date(json.updatedAt) : undefined
+            json.updatedAt ? GoodDate.fromString(json.updatedAt) : undefined
         );
     }
 

@@ -11,8 +11,14 @@ setTitle('管理员管理页');
 
 const tab = ref(0);
 
-const isSU = JSON.parse(getStorageItem('admin') ?? '{}').type === UserType.UserSU,
-    tabs = isSU ? ['个人资料', '管理管理员'] : ['个人资料'];
+let isSU: boolean, tabs: string[];
+
+try {
+    (isSU = JSON.parse(getStorageItem('admin') ?? '{}').type === UserType.UserSU),
+        (tabs = isSU ? ['个人资料', '管理管理员'] : ['个人资料']);
+} catch (_) {
+    window.location.href = '/sign-in';
+}
 </script>
 
 <template>

@@ -41,6 +41,8 @@ export class Activity {
     date: GoodDate;
     state: ActivityState;
     owner: string;
+    instructor: string;
+    committee: string;
     createdAt: GoodDate;
     updatedAt: GoodDate;
     deletedAt: GoodDate | undefined;
@@ -53,6 +55,8 @@ export class Activity {
         date: string | GoodDate,
         state: ActivityState,
         owner: string,
+        instructor: string,
+        committee: string,
         createdAt: string | GoodDate,
         updatedAt: string | GoodDate,
         deletedAt?: string | GoodDate
@@ -64,6 +68,8 @@ export class Activity {
         this.date = typeof date === 'string' ? GoodDate.fromString(date) : date;
         this.state = state;
         this.owner = owner;
+        this.instructor = instructor;
+        this.committee = committee;
         this.createdAt = typeof createdAt === 'string' ? GoodDate.fromString(createdAt) : createdAt;
         this.updatedAt = typeof updatedAt === 'string' ? GoodDate.fromString(updatedAt) : updatedAt;
         this.deletedAt = deletedAt
@@ -82,6 +88,8 @@ export class Activity {
             json.date,
             json.state,
             json.owner,
+            json.instructor,
+            json.committee,
             json.createdAt,
             json.updatedAt,
             json.deletedAt
@@ -100,13 +108,17 @@ export class Activity {
         new GoodDate(),
         ActivityState.Draft,
         '',
+        '',
+        '',
         new GoodDate(),
         new GoodDate(),
         undefined
     );
 
-    static list = async (limit: number, offset: number, props: { serverEndpoint?: string }) => {
-        const response = await fetch(props.serverEndpoint + '/activity' + `?limit=${limit}&offset=${offset}`);
+    static list = async (limit: number, offset: number, state: number, props: { serverEndpoint?: string }) => {
+        const response = await fetch(
+            props.serverEndpoint + '/activity' + `?limit=${limit}&offset=${offset}&state=${state}`
+        );
         const json = await response.json();
         if (response.ok) {
             return Activity.fromJSONList(json.data);
@@ -127,7 +139,7 @@ export class Activity {
         const response = await fetch(props.serverEndpoint + '/activity/' + id);
         const json = await response.json();
         if (response.ok) {
-            return Activity.fromJSON(json);
+            return Activity.fromJSON(json.data);
         } else if (response.status === 400) {
             throw new Error(errorBadRequest);
         } else if (response.status === 403) {
@@ -137,12 +149,13 @@ export class Activity {
         } else if (response.status === 500) {
             throw new Error(errorInternal);
         } else {
-            throw new Error(json['error']);
+            throw new Error(json.error);
         }
     };
 
     static create = async (
         data: {
+            id: string;
             name: string;
             description: string;
             location: string;

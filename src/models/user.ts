@@ -73,7 +73,8 @@ export class User {
 
 export class Admin extends User {
     description: string;
-    head: string;
+    instructor?: string;
+    committee?: string;
     password: string;
     createdAt: GoodDate;
     deletedAt: GoodDate | undefined;
@@ -83,14 +84,16 @@ export class Admin extends User {
         name: string,
         type: UserType,
         description: string,
-        head: string,
+        instructor: string | undefined,
+        committee: string | undefined,
         password: string,
         createdAt: string | GoodDate,
         deletedAt?: string | GoodDate
     ) {
         super(id, name, type);
         this.description = description;
-        this.head = head;
+        this.instructor = instructor;
+        this.committee = committee;
         this.password = password;
         this.createdAt = typeof createdAt === 'string' ? GoodDate.fromString(createdAt) : createdAt;
         this.deletedAt = deletedAt
@@ -106,7 +109,8 @@ export class Admin extends User {
             json.name,
             json.type,
             json.description,
-            json.head,
+            json.instructor,
+            json.committee,
             json.password,
             json.createdAt,
             json.updatedAt
@@ -117,7 +121,7 @@ export class Admin extends User {
         return json.map((item: any) => Admin.fromJSON(item));
     }
 
-    static template = new Admin('', '', UserType.UserSU, '', '', '', new GoodDate(), undefined);
+    static template = new Admin('', '', UserType.UserSU, '', '', '', '', new GoodDate(), undefined);
 
     static listAdmin = async (props: { serverEndpoint?: string }) => {
         const response = await fetch(props.serverEndpoint + '/user/admin');
@@ -147,9 +151,10 @@ export class Admin extends User {
         data: {
             id: string;
             name: string;
-            type: string;
+            type: UserType;
             password: string;
-            head: string;
+            instructor?: string;
+            committee?: string;
         },
         props: { serverEndpoint?: string }
     ) => {
@@ -180,7 +185,8 @@ export class Admin extends User {
             description: string;
             password: string;
             type?: UserType;
-            head?: string;
+            instructor?: string;
+            committee?: string;
         },
         props: { serverEndpoint?: string }
     ) => {

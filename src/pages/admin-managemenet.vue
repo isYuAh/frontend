@@ -15,7 +15,8 @@ interface Model {
     name: string;
     type: string;
     password: string;
-    head: string;
+    instructor?: string;
+    committee?: string;
 }
 
 let admins = ref<Model[]>([]),
@@ -23,7 +24,6 @@ let admins = ref<Model[]>([]),
     headChoices = computed(() => {
         return [
             ...admins.value
-                .filter((admin) => admin.id !== '')
                 .map((admin) => {
                     return {
                         label: `${admin.name}（${getUserTypeString(admin.type)}）`,
@@ -51,7 +51,8 @@ const getAdmins = async () => {
                 name: admin.name,
                 type: admin.type.toString(),
                 password: '',
-                head: admin.head,
+                instructor: admin.instructor,
+                committee: admin.committee,
             };
         });
         setMessage({
@@ -76,7 +77,8 @@ const addAdmin = () => {
         name: '',
         type: '0',
         password: '',
-        head: '',
+        instructor: undefined,
+        committee: undefined,
     };
     admins.value.push(newAdmin);
     setTimeout(() => {
@@ -113,7 +115,8 @@ const addAdmin = () => {
                     <th class="px-6 py-3" scope="col">ID</th>
                     <th class="px-6 py-3" scope="col">名称</th>
                     <th class="px-6 py-3" scope="col">类型</th>
-                    <th class="px-6 py-3" scope="col">上级</th>
+                    <th class="px-6 py-3" scope="col">指导老师<sup>*</sup></th>
+                    <th class="px-6 py-3" scope="col">所属团委<sup>*</sup></th>
                     <th class="px-6 py-3" scope="col">密码</th>
                     <th class="px-6 py-3" scope="col">操作</th>
                 </tr>

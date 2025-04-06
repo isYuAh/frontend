@@ -1,6 +1,4 @@
 <script lang="ts" setup>
-import { setTitle } from '@utils/title';
-import { ActivityState } from '@models/activity';
 import { ActivityDetail } from '@models/detail';
 import { inject, ref } from 'vue';
 import Spinner from '@components/spinner.vue';
@@ -9,9 +7,7 @@ import { nanoid } from '@utils/crypto';
 
 const { setMessage } = inject('banner') as any;
 
-setTitle('活动事项管理');
-
-const { id, activityState } = defineProps<{ id: string; activityState: ActivityState }>();
+const { id, editable } = defineProps<{ id: string; editable: boolean }>();
 
 interface Model {
     id: string;
@@ -70,7 +66,6 @@ const addDetail = () => {
 </script>
 
 <template>
-    <h2 class="mb-4 text-2xl font-black">活动事项管理</h2>
     <Spinner v-if="status === 0" />
     <div v-if="status !== 2" class="relative overflow-x-auto shadow-lg sm:rounded-lg">
         <table class="w-full text-left text-sm text-gray-500 rtl:text-right dark:text-gray-400">
@@ -79,7 +74,7 @@ const addDetail = () => {
             >
                 活动事项列表
                 <p class="mt-1 text-sm font-normal text-gray-500 dark:text-gray-400">
-                    <template v-if="activityState === 0 || activityState === 3">
+                    <template v-if="editable">
                         选择活动修改活动事项。
                         <a class="text-primary dark:text-primary-200 underline" href="?" @click.prevent="addDetail">
                             添加一个新事项
@@ -92,7 +87,8 @@ const addDetail = () => {
                         href="?"
                         @click.prevent="getActivityDetails"
                     >
-                        重新加载（这会丢失未提交的数据）
+                        重新加载
+                        <template v-if="editable"> （这会丢失未提交的数据）</template>
                     </a>
                 </p>
             </caption>
@@ -110,11 +106,12 @@ const addDetail = () => {
                     :key="detail.id"
                     :activity-id="id"
                     :detail="detail"
-                    :editable="activityState === 0 || activityState === 3"
+                    :editable="editable"
                     @delete-temporary-detail="details.splice(details.indexOf(detail), 1)"
                 />
             </tbody>
         </table>
+        <p v-if="details.length === 0" class="my-4 block text-center font-bold">无活动事项</p>
     </div>
     <p v-if="status === 2">
         无法获取活动事项信息；
