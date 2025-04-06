@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { Activity } from '@models/activity';
 import ActivityEdit from '@components/activity-edit.vue';
 
 interface Model {

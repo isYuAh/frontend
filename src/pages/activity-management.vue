@@ -29,7 +29,7 @@ let activities = ref<Model[]>([]),
     activeID = ref<string>(),
     currentAction = ref<string>();
 
-const handleQuery = async (resetPage: boolean = false) => {
+const handleQuery = async (_: boolean = false) => {
         status.value = 0;
         activeID.value = '';
         currentAction.value = '';
