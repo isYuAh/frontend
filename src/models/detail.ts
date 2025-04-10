@@ -1,7 +1,6 @@
 import { errorBadRequest, errorForbidden, errorInternal, errorNotFound } from '@utils/error-msg';
 import { getCookie } from '@utils/cookie';
 
-
 export class ActivityDetail {
     id: string;
     activityId: string;

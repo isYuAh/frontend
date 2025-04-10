@@ -8,6 +8,7 @@ import { GoodDate } from '@utils/datetime';
 import ActivityDetailTab from '@pages/activity-detail-tab.vue';
 import ActivityTab from '@pages/activity-tab.vue';
 import InputSelect from '@components/input-select.vue';
+import ActivityReviewTab from '@components/activity-review-tab.vue';
 
 const { setMessage } = inject('banner') as any;
 
@@ -191,6 +192,12 @@ handleQuery();
             :id="activeID"
             :editable="[0, 3].indexOf(activities.find((a) => a.id === activeID)?.state ?? -1) != -1"
             :on-saved="onActivitySaved"
+        />
+        <activity-review-tab
+            v-if="currentAction === '审核'"
+            :id="activeID"
+            :activityCreatable="[0, 3].indexOf(activities.find((a) => a.id === activeID)?.state ?? -1) != -1"
+            :ticketCreatable="[2, 6].indexOf(activities.find((a) => a.id === activeID)?.state ?? -1) != -1"
         />
     </div>
     <p v-if="status === 2">

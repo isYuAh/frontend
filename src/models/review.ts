@@ -70,7 +70,12 @@ export class Review {
     }
 
     static list = async (activityId: string, props: { serverEndpoint?: string }) => {
-        const response = await fetch(props.serverEndpoint + '/activity/' + activityId + '/review');
+        const response = await fetch(props.serverEndpoint + '/activity/' + activityId + '/review', {
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: getCookie('token') || '',
+            },
+        });
         const json = await response.json();
         if (response.ok) {
             return json;
@@ -132,6 +137,8 @@ export class Review {
             return json;
         } else if (response.status === 500) {
             throw new Error(errorInternal);
+        } else if (response.status === 406) {
+            throw new Error('发生冲突');
         } else {
             throw new Error(json.error);
         }
