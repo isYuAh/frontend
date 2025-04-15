@@ -36,6 +36,19 @@ import Spinner from '@components/spinner.vue';
     type: number;
     points: number;
   }
+  const handleDeleteTicket = async (ticket: Ticket) => {
+    Ticket.delete(id, ticket.id, {serverEndpoint: devConfig.serverEndpoint}).then(() => {
+      setMessage({
+        type:'success',
+        message: '成功删除加分条信息',
+      }); 
+    }).catch((e: Error) => {
+      setMessage({
+        type:'error',
+        message: e.message,
+      }); 
+    })
+  }
   const uploadTicket = async () => {
     const input = document.createElement('input');
     input.type = 'file';
@@ -133,8 +146,7 @@ import Spinner from '@components/spinner.vue';
                   <td class="px-6 py-4">{{ ticket.points / 100 }}</td>
                   <td class="px-6 py-4">{{ ticket.date.toISODate() }}</td>
                   <td class="px-6 py-4">
-                      <button class="mr-2 rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700">编辑</button>
-                      <button class="rounded bg-red-500 px-4 py-2 font-bold text-white hover:bg-red-700">删除</button>
+                      <button class="rounded bg-red-500 px-4 py-2 font-bold text-white hover:bg-red-700" @click="handleDeleteTicket(ticket)">删除</button>
                   </td>
               </tr>
           </tbody>
