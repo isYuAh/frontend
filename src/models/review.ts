@@ -72,13 +72,34 @@ export class Review {
     static list = async (activityId: string, props: { serverEndpoint?: string }) => {
         const response = await fetch(props.serverEndpoint + '/activity/' + activityId + '/review', {
             headers: {
-                'Content-Type': 'application/json',
                 Authorization: getCookie('token') || '',
             },
         });
         const json = await response.json();
         if (response.ok) {
-            return json;
+            return Review.fromJSONList(json.data);
+        } else if (response.status === 400) {
+            throw new Error(errorBadRequest);
+        } else if (response.status === 403) {
+            throw new Error(errorForbidden);
+        } else if (response.status === 404) {
+            throw new Error(errorNotFound);
+        } else if (response.status === 500) {
+            throw new Error(errorInternal);
+        } else {
+            throw new Error(json['error']);
+        }
+    };
+
+    static listCount = async (activityId: string, props: { serverEndpoint?: string }) => {
+        const response = await fetch(props.serverEndpoint + '/activity/' + activityId + '/review?count=true', {
+            headers: {
+                Authorization: getCookie('token') || '',
+            },
+        });
+        const json = await response.json();
+        if (response.ok) {
+            return json.data as number;
         } else if (response.status === 400) {
             throw new Error(errorBadRequest);
         } else if (response.status === 403) {
@@ -109,7 +130,7 @@ export class Review {
         const json = await response.json();
 
         if (response.ok) {
-            return json;
+            return json.data;
         } else if (response.status === 400) {
             throw new Error(errorBadRequest);
         } else if (response.status === 403) {
@@ -137,8 +158,6 @@ export class Review {
             return json;
         } else if (response.status === 500) {
             throw new Error(errorInternal);
-        } else if (response.status === 406) {
-            throw new Error('发生冲突');
         } else {
             throw new Error(json.error);
         }
@@ -173,6 +192,38 @@ export class Review {
 
         if (response.ok) {
             return Review.fromJSONList(json.data);
+        } else if (response.status === 404) {
+            throw new Error(errorNotFound);
+        } else if (response.status === 500) {
+            throw new Error(errorInternal);
+        } else {
+            throw new Error((json as any).error);
+        }
+    };
+
+    static listByReviewerIdCount = async (
+        {
+            type = '-1',
+            state = '-1',
+        }: {
+            type?: string;
+            state?: string;
+        },
+        props: { serverEndpoint?: string }
+    ) => {
+        const uri = new URL(props.serverEndpoint + '/activity/review/reviewer?count=true');
+        uri.searchParams.append('type', type);
+        uri.searchParams.append('state', state);
+        const response = await fetch(uri, {
+                method: 'GET',
+                headers: {
+                    Authorization: getCookie('token') || '',
+                },
+            }),
+            json = await response.json();
+
+        if (response.ok) {
+            return json.data as number;
         } else if (response.status === 404) {
             throw new Error(errorNotFound);
         } else if (response.status === 500) {

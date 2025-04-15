@@ -21,7 +21,7 @@ try {
 </script>
 
 <template>
-    <section class="relative flex h-[calc(100vh-72px)] w-full flex-col justify-center overflow-hidden">
+    <section class="relative flex h-72 w-full flex-col justify-center overflow-hidden md:h-96 lg:h-128 xl:h-144">
         <img
             alt="background"
             class="absolute -left-16 -z-10 w-[calc(100vw+8rem)] max-w-none opacity-20 blur-md"
@@ -42,25 +42,25 @@ try {
         </div>
     </section>
 
-    <section class="container mx-auto flex h-[calc(100vh-72px)] max-w-256 flex-col justify-center">
+    <section class="container mx-auto flex my-16 max-w-256 flex-col justify-center">
         <template v-if="userType === 'student'">
             <h2 class="mb-8 text-4xl font-bold">🏫 学生快速链接</h2>
             <div class="flex justify-between space-x-8 text-3xl font-bold text-white">
                 <router-link
-                    class="bg-primary/60 hover:bg-primary/80 flex h-72 flex-1 items-center justify-center rounded-xl text-center shadow-xl backdrop-blur-sm backdrop-blur-xs hover:shadow-2xl"
+                    class="bg-primary/60 hover:bg-primary/80 flex h-72 flex-1 items-center justify-center rounded-xl text-center shadow-xl backdrop-blur-sm duration-100 hover:shadow-2xl"
                     to="/query-ticket"
                 >
                     <div class="mb-4">查询你的加分条！</div>
                 </router-link>
                 <router-link
-                    class="bg-secondary/60 hover:bg-secondary/80 flex h-72 flex-1 items-center justify-center rounded-xl text-center shadow-xl backdrop-blur-sm backdrop-blur-xs hover:shadow-2xl"
-                    to="/query-ticket"
+                    class="bg-secondary/60 hover:bg-secondary/80 flex h-72 flex-1 items-center justify-center rounded-xl text-center shadow-xl backdrop-blur-sm duration-100 hover:shadow-2xl"
+                    to="/activity-list"
                 >
                     <div class="mb-4">最近有什么新活动？</div>
                 </router-link>
                 <router-link
-                    class="bg-tertiary/60 hover:bg-tertiary/80 flex h-72 flex-1 items-center justify-center rounded-xl text-center shadow-xl backdrop-blur-sm backdrop-blur-xs hover:shadow-2xl"
-                    to="/query-ticket"
+                    class="bg-tertiary/60 hover:bg-tertiary/80 flex h-72 flex-1 items-center justify-center rounded-xl text-center shadow-xl backdrop-blur-sm duration-100 hover:shadow-2xl"
+                    to="/org-list"
                 >
                     <div class="mb-4">寻找活动组织</div>
                 </router-link>
@@ -70,8 +70,8 @@ try {
             <h2 class="mb-4 text-2xl font-bold">🏫 管理员快速链接</h2>
             <div class="flex justify-between space-x-8 text-3xl font-bold text-white">
                 <router-link
-                    class="bg-primary/60 flex h-72 flex-1/2 items-center justify-center rounded-xl text-center shadow-xl backdrop-blur-xs hover:shadow-2xl"
-                    to="/query-ticket"
+                    class="bg-primary/60 flex h-72 flex-1/2 items-center justify-center rounded-xl text-center shadow-xl backdrop-blur-xs duration-100 hover:shadow-2xl"
+                    to="/dashboard"
                 >
                     <div>前往管理面板！</div>
                 </router-link>

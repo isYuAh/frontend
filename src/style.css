@@ -49,6 +49,18 @@ body,
 }
 
 @theme {
+    --w-128: 32rem;
+    --w-144: 36rem;
+    --w-160: 40rem;
+    --w-176: 44rem;
+    --w-192: 48rem;
+    --w-208: 52rem;
+    --w-224: 56rem;
+    --w-256: 64rem;
+    --w-288: 72rem;
+    --w-320: 80rem;
+    --w-384: 96rem;
+
     --color-primary-50: #f0f9ff;
     --color-primary-100: #e0f2fe;
     --color-primary-200: #bae6fd;

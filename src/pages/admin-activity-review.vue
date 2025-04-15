@@ -26,19 +26,15 @@ const showDialog = ref(false),
     currentReview = ref<Review | null>(null),
     comment = ref(''),
     dialogMode = ref<'activity' | 'ticket'>(),
-    reviews = ref<Review[]>([]);
+    reviews = ref<Review[]>([]),
+    count = ref(0);
 
 const config = reactive({
         current: 1,
         pageSize: 20,
     }),
     totalPage = computed(() => {
-        return Math.ceil(reviews.value.length / config.pageSize);
-    }),
-    currentPageData = computed(() => {
-        const start = (config.current - 1) * config.pageSize;
-        const end = start + config.pageSize;
-        return reviews.value.slice(start, end);
+        return Math.ceil(count.value / config.pageSize);
     }),
     displayedPages = computed(() => {
         const total = totalPage.value;
@@ -90,16 +86,17 @@ const form = reactive({
 
 const handleQuery = async (resetPage: boolean = true) => {
     try {
-        reviews.value = await Review.listByReviewerId(
-            {
-                offset: config.current * config.pageSize - config.pageSize,
-                type: form.type,
-                state: form.status,
-            },
-            {
-                serverEndpoint: devConfig.serverEndpoint,
-            }
-        );
+        const props = {
+            offset: config.current * config.pageSize - config.pageSize,
+            type: form.type,
+            state: form.status,
+        };
+        count.value = await Review.listByReviewerIdCount(props, {
+            serverEndpoint: devConfig.serverEndpoint,
+        });
+        reviews.value = await Review.listByReviewerId(props, {
+            serverEndpoint: devConfig.serverEndpoint,
+        });
         if (resetPage) {
             config.current = 1;
         }
@@ -189,6 +186,7 @@ const submitReview = async () => {
 handleQuery();
 </script>
 <template>
+    <h2 class="mb-4 text-2xl font-black">审核列表</h2>
     <form class="mb-8 flex items-center" @submit.prevent="handleQuery(false)">
         <div class="flex flex-1 space-x-2">
             <InputSelect
@@ -250,101 +248,103 @@ handleQuery();
         </button>
     </form>
 
-    <div class="relative overflow-x-auto shadow-lg sm:rounded-lg">
-        <table class="w-full text-left text-sm text-gray-500 rtl:text-right dark:text-gray-400">
-            <caption
-                class="bg-white p-5 text-left text-lg font-semibold text-gray-900 rtl:text-right dark:bg-gray-800 dark:text-white"
-            >
-                审核列表
-                <p class="mt-1 text-sm font-normal text-gray-500 dark:text-gray-400">浏览审核记录。</p>
-            </caption>
-            <thead class="bg-gray-100 text-xs text-gray-700 uppercase dark:bg-gray-700 dark:text-gray-400">
-                <tr>
-                    <th class="px-6 py-3" scope="col">活动名</th>
-                    <th class="px-6 py-3" scope="col">类型</th>
-                    <th class="px-6 py-3" scope="col">提交者</th>
-                    <th class="px-6 py-3" scope="col">导师</th>
-                    <th class="px-6 py-3" scope="col">导师评论</th>
-                    <th class="px-6 py-3" scope="col">团委</th>
-                    <th class="px-6 py-3" scope="col">团委评论</th>
-                    <th class="px-6 py-3" scope="col">状态</th>
-                    <th class="px-6 py-3" scope="col">更新时间</th>
-                    <th class="px-6 py-3" scope="col">操作</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr
-                    v-for="review in currentPageData"
-                    :key="review.id"
-                    class="divide-y divide-solid divide-gray-200 bg-white hover:bg-gray-50 dark:divide-gray-700 dark:bg-gray-800 dark:hover:bg-gray-600"
+    <div class="overflow-x-auto shadow-lg sm:rounded-lg">
+        <div class="min-w-288">
+            <table class="w-full text-left text-sm text-gray-500 rtl:text-right dark:text-gray-400">
+                <caption
+                    class="bg-white p-5 text-left text-lg font-semibold text-gray-900 rtl:text-right dark:bg-gray-800 dark:text-white"
                 >
-                    <td class="px-6 py-4">{{ review.activityId }}</td>
-                    <td class="px-6 py-4">{{ review.type === 0 ? '活动内容审核' : '加分条审核' }}</td>
-                    <td class="px-6 py-4">{{ review.owner }}</td>
-                    <td class="px-6 py-4">{{ review.instructor }}</td>
-                    <td class="px-6 py-4">{{ review.instructorComment }}</td>
-                    <td class="px-6 py-4">{{ review.committee }}</td>
-                    <td class="px-6 py-4">{{ review.committeeComment }}</td>
-                    <td class="px-6 py-4">
-                        <span
-                            :class="{
-                                'bg-yellow-100 text-yellow-800': review.state === 0,
-                                'bg-red-100 text-red-800': review.state === 1 || review.state === 4,
-                                'bg-blue-100 text-blue-800': review.state === 2,
-                                'bg-green-100 text-green-800': review.state === 3,
-                            }"
-                            class="rounded px-2.5 py-0.5 text-xs font-medium"
-                        >
-                            {{
-                                review.state === 0
-                                    ? '待导师审核'
-                                    : review.state === 1
-                                      ? '导师已拒绝'
-                                      : review.state === 2
-                                        ? '待团委审核'
-                                        : review.state === 3
-                                          ? '团委已通过'
-                                          : '团委已拒绝'
-                            }}
-                        </span>
-                    </td>
-                    <td class="px-6 py-4">{{ review.updatedAt?.toLocalizedDateString() ?? '日期有误' }}</td>
-                    <td class="px-6 py-4">
-                        <div class="flex space-x-2">
-                            <button
-                                class="rounded bg-blue-100 px-2 py-1 text-xs font-medium text-blue-800 hover:bg-blue-200"
-                                @click="openInfoDialog(review)"
+                    审核列表
+                    <p class="mt-1 text-sm font-normal text-gray-500 dark:text-gray-400">浏览审核记录。</p>
+                </caption>
+                <thead class="bg-gray-100 text-xs text-gray-700 uppercase dark:bg-gray-700 dark:text-gray-400">
+                    <tr>
+                        <th class="px-6 py-3" scope="col">活动名</th>
+                        <th class="px-6 py-3" scope="col">类型</th>
+                        <th class="px-6 py-3" scope="col">提交者</th>
+                        <th class="px-6 py-3" scope="col">导师</th>
+                        <th class="px-6 py-3" scope="col">导师评论</th>
+                        <th class="px-6 py-3" scope="col">团委</th>
+                        <th class="px-6 py-3" scope="col">团委评论</th>
+                        <th class="px-6 py-3" scope="col">状态</th>
+                        <th class="px-6 py-3" scope="col">更新时间</th>
+                        <th class="px-6 py-3" scope="col">操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr
+                        v-for="review in reviews"
+                        :key="review.id"
+                        class="divide-y divide-solid divide-gray-200 bg-white hover:bg-gray-50 dark:divide-gray-700 dark:bg-gray-800 dark:hover:bg-gray-600"
+                    >
+                        <td class="px-6 py-4">{{ review.activityId }}</td>
+                        <td class="px-6 py-4">{{ review.type === 0 ? '活动内容审核' : '加分条审核' }}</td>
+                        <td class="px-6 py-4">{{ review.owner }}</td>
+                        <td class="px-6 py-4">{{ review.instructor }}</td>
+                        <td class="px-6 py-4">{{ review.instructorComment }}</td>
+                        <td class="px-6 py-4">{{ review.committee }}</td>
+                        <td class="px-6 py-4">{{ review.committeeComment }}</td>
+                        <td class="px-6 py-4">
+                            <span
+                                :class="{
+                                    'bg-yellow-100 text-yellow-800': review.state === 0,
+                                    'bg-red-100 text-red-800': review.state === 1 || review.state === 4,
+                                    'bg-blue-100 text-blue-800': review.state === 2,
+                                    'bg-green-100 text-green-800': review.state === 3,
+                                }"
+                                class="rounded px-2.5 py-0.5 text-xs font-medium break-keep"
                             >
-                                查看信息
-                            </button>
+                                {{
+                                    review.state === 0
+                                        ? '待导师审核'
+                                        : review.state === 1
+                                          ? '导师已拒绝'
+                                          : review.state === 2
+                                            ? '待团委审核'
+                                            : review.state === 3
+                                              ? '团委已通过'
+                                              : '团委已拒绝'
+                                }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4">{{ review.updatedAt?.toLocalizedDateString() ?? '日期有误' }}</td>
+                        <td class="px-6 py-4">
+                            <div class="flex space-x-2">
+                                <button
+                                    class="rounded bg-blue-100 px-2 py-1 text-xs font-medium text-blue-800 hover:bg-blue-200"
+                                    @click="openInfoDialog(review)"
+                                >
+                                    查看信息
+                                </button>
 
-                            <template
-                                v-if="
-                                    (review.state === 0 && userIsInstructor) || (review.state === 2 && userIsCommittee)
-                                "
-                            >
-                                <button
-                                    class="rounded bg-green-100 px-2 py-1 text-xs font-medium text-green-800 hover:bg-green-200"
-                                    @click="openApproveDialog(review)"
+                                <template
+                                    v-if="
+                                        (review.state === 0 && userIsInstructor) ||
+                                        (review.state === 2 && userIsCommittee)
+                                    "
                                 >
-                                    通过
-                                </button>
-                                <button
-                                    class="rounded bg-red-100 px-2 py-1 text-xs font-medium text-red-800 hover:bg-red-200"
-                                    @click="openRejectDialog(review)"
-                                >
-                                    拒绝
-                                </button>
-                            </template>
-                        </div>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+                                    <button
+                                        class="rounded bg-green-100 px-2 py-1 text-xs font-medium text-green-800 hover:bg-green-200"
+                                        @click="openApproveDialog(review)"
+                                    >
+                                        通过
+                                    </button>
+                                    <button
+                                        class="rounded bg-red-100 px-2 py-1 text-xs font-medium text-red-800 hover:bg-red-200"
+                                        @click="openRejectDialog(review)"
+                                    >
+                                        拒绝
+                                    </button>
+                                </template>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
         <p v-if="reviews.length === 0" class="my-4 block text-center font-bold">无待审核内容</p>
     </div>
 
-    <!-- 分页控制 -->
     <div class="mt-4 flex items-center justify-between">
         <div class="text-sm text-gray-700 dark:text-gray-400">
             显示 {{ reviews.length > 0 ? (config.current - 1) * config.pageSize + 1 : 0 }} 到
@@ -353,7 +353,7 @@ handleQuery();
         <div class="flex space-x-2">
             <button
                 :disabled="config.current === 1"
-                class="rounded border border-gray-300 px-3 py-1 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+                class="rounded border border-gray-300 px-3 py-1 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50 dark:text-white"
                 @click="config.current = Math.max(1, config.current - 1)"
             >
                 上一页
@@ -361,13 +361,13 @@ handleQuery();
             <div class="flex space-x-1">
                 <template v-for="page in displayedPages" :key="page">
                     <template v-if="page === -1">
-                        <span class="px-3 py-1 text-sm font-medium text-gray-700">...</span>
+                        <span class="px-3 py-1 text-sm font-medium text-gray-700 dark:text-white">...</span>
                     </template>
                     <template v-else>
                         <button
                             :class="{
                                 'bg-primary text-white': config.current === page,
-                                'bg-white text-gray-700 hover:bg-gray-50': config.current !== page,
+                                'bg-white text-gray-700 hover:bg-gray-50 dark:text-white': config.current !== page,
                             }"
                             class="rounded border border-gray-300 px-3 py-1 text-sm font-medium"
                             @click="config.current = page"
@@ -379,7 +379,7 @@ handleQuery();
             </div>
             <button
                 :disabled="config.current === totalPage || totalPage === 0"
-                class="rounded border border-gray-300 px-3 py-1 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+                class="rounded border border-gray-300 px-3 py-1 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50 dark:text-white"
                 @click="config.current = Math.min(totalPage, config.current + 1)"
             >
                 下一页
@@ -387,7 +387,6 @@ handleQuery();
         </div>
     </div>
 
-    <!-- 对话框组件 -->
     <div v-if="showDialog" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
         <div class="w-full max-w-md rounded-lg bg-white p-6 shadow-lg dark:bg-gray-800">
             <div class="mb-4 flex items-center justify-between">

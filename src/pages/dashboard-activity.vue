@@ -14,7 +14,7 @@ const tabs: string[] = ['活动审核', '活动管理', '创建活动'];
 </script>
 
 <template>
-    <div class="mx-auto w-full px-4">
+    <div class="mx-auto px-4">
         <Tabs v-model:tab="tab" :tabs="tabs" />
         <AdminActivityReview v-if="tab === 0" />
         <ActivityManagement v-if="tab === 1" />

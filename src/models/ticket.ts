@@ -88,7 +88,7 @@ export class Ticket {
             json = await response.json();
 
         if (response.ok) {
-            return json.data;
+            return Ticket.fromJSONList(json.data);
         } else if (response.status === 400) {
             throw new Error(errorBadRequest);
         } else if (response.status === 403) {
@@ -99,10 +99,14 @@ export class Ticket {
     };
 
     static list = async (activityId: string, props: { serverEndpoint?: string }) => {
-        const response = await fetch(props.serverEndpoint + '/activity/' + activityId + '/ticket');
+        const response = await fetch(props.serverEndpoint + '/activity/' + activityId + '/ticket', {
+            headers: {
+                Authorization: getCookie('token') || '',
+            },
+        });
         const json = await response.json();
         if (response.ok) {
-            return json;
+            return Ticket.fromJSONList(json.data);
         } else if (response.status === 400) {
             throw new Error(errorBadRequest);
         } else if (response.status === 403) {
@@ -133,11 +137,10 @@ export class Ticket {
                 Authorization: getCookie('token') || '',
             },
             body: JSON.stringify(data),
-        });
-        const json = await response.json();
+        }), json = await response.json();
 
         if (response.ok) {
-            return json;
+            return Ticket.fromJSON(json.data);
         } else if (response.status === 400) {
             throw new Error(errorBadRequest);
         } else if (response.status === 403) {
@@ -160,7 +163,7 @@ export class Ticket {
         const json = await response.json();
 
         if (response.ok) {
-            return json;
+            return;
         } else if (response.status === 400) {
             throw new Error(errorBadRequest);
         } else if (response.status === 403) {
@@ -194,7 +197,7 @@ export class Ticket {
         const json = await response.json();
 
         if (response.ok) {
-            return json;
+            return Ticket.fromJSON(json.data);
         } else if (response.status === 400) {
             throw new Error(errorBadRequest);
         } else if (response.status === 403) {

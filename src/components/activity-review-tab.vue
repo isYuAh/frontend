@@ -38,10 +38,9 @@ const handleCreateReview = async () => {
         status.value = 0;
 
         try {
-            const response = await Review.list(id, {
+            reviews.value = await Review.list(id, {
                 serverEndpoint: devConfig.serverEndpoint,
             });
-            reviews.value = response.data;
             status.value = 1;
         } catch (e) {
             status.value = 2;

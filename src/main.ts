@@ -12,6 +12,8 @@ const DashboardAdminPage = () => import('@pages/dashboard-admin.vue');
 const DashboardActivityPage = () => import('@pages/dashboard-activity.vue');
 const DashboardStudentPage = () => import('@pages/dashboard-student.vue');
 const QueryTicketPage = () => import('@pages/query-ticket.vue');
+const OrgListPage = () => import('@pages/org-list.vue');
+const ActivityListPage = () => import('@pages/activity-list.vue');
 
 const routes = [
     { path: '/', component: HomePage },
@@ -22,6 +24,8 @@ const routes = [
     { path: '/dashboard/activity', component: DashboardActivityPage },
     { path: '/dashboard/student', component: DashboardStudentPage },
     { path: '/query-ticket', component: QueryTicketPage },
+    { path: '/org-list', component: OrgListPage },
+    { path: '/activity-list', component: ActivityListPage },
 ];
 
 const router = createRouter({
