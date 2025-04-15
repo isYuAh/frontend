@@ -3,6 +3,7 @@ import { Review } from '@models/review';
 import { devConfig } from '@utils/devConfig';
 import { inject, ref } from 'vue';
 import Spinner from '@components/spinner.vue';
+import { watch } from 'vue';
 
 const { setMessage } = inject('banner') as any;
 
@@ -52,7 +53,11 @@ const handleCreateReview = async () => {
             console.error(e);
         }
     };
-handleQuery();
+watch(() => id, () => {
+    handleQuery();
+}, {
+    immediate: true,
+})
 </script>
 <template>
     <h3 class="mb-4 text-2xl font-black">活动审核管理</h3>

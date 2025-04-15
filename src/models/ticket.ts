@@ -99,7 +99,11 @@ export class Ticket {
     };
 
     static list = async (activityId: string, props: { serverEndpoint?: string }) => {
-        const response = await fetch(props.serverEndpoint + '/activity/' + activityId + '/ticket');
+        const response = await fetch(props.serverEndpoint + '/activity/' + activityId + '/ticket', {
+            headers: {
+                Authorization: getCookie('token') || '',
+            }
+        });
         const json = await response.json();
         if (response.ok) {
             return json;

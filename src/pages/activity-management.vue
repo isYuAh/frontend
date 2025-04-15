@@ -7,6 +7,7 @@ import ActivityRow from '@components/activity-row.vue';
 import { GoodDate } from '@utils/datetime';
 import ActivityDetailTab from '@pages/activity-detail-tab.vue';
 import ActivityTab from '@pages/activity-tab.vue';
+import ActivityTicketTab from '@pages/activity-ticket-tab.vue';
 import InputSelect from '@components/input-select.vue';
 import ActivityReviewTab from '@components/activity-review-tab.vue';
 
@@ -28,11 +29,13 @@ let activities = ref<Model[]>([]),
     limit = 50,
     offset = ref(0),
     activeID = ref<string>(),
+    activeDetailId = ref<string>(),
     currentAction = ref<string>();
 
 const handleQuery = async (_: boolean = false) => {
         status.value = 0;
         activeID.value = '';
+        activeDetailId.value = '';
         currentAction.value = '';
 
         try {
@@ -45,7 +48,7 @@ const handleQuery = async (_: boolean = false) => {
                     name: activity.name,
                     date: activity.date,
                     state: activity.state,
-                    actions: ['活动事项', '审核', '活动详情', '加分条'],
+                    actions: ['活动事项', '审核', '活动详情'],
                 };
             });
             setMessage({
@@ -186,6 +189,10 @@ handleQuery();
             v-if="currentAction === '活动事项'"
             :id="activeID"
             :editable="[0, 3].indexOf(activities.find((a) => a.id === activeID)?.state ?? -1) != -1"
+            @checkTicket="(detailId) => {
+                activeDetailId = detailId;
+                currentAction = '加分条';
+            }"
         />
         <activity-tab
             v-if="currentAction === '活动详情'"
@@ -199,6 +206,13 @@ handleQuery();
             :activityCreatable="[0, 3].indexOf(activities.find((a) => a.id === activeID)?.state ?? -1) != -1"
             :ticketCreatable="[2, 6].indexOf(activities.find((a) => a.id === activeID)?.state ?? -1) != -1"
         />
+        <activity-ticket-tab
+            v-if="currentAction === '加分条' && activeDetailId !== ''"
+            :id="activeID"
+            :activeDetailId="activeDetailId"
+        >
+            
+        </activity-ticket-tab>
     </div>
     <p v-if="status === 2">
         无法获取活动信息；
