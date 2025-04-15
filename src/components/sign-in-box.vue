@@ -1,8 +1,8 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import { inject, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { setTitle } from '@utils/title';
-import { Admin, User } from '@models/user';
+import { Admin } from '@models/user';
 import { setCookie } from '@utils/cookie';
 import { setStorageItem } from '@utils/storage';
 
@@ -60,34 +60,8 @@ const handleSubmit = async () => {
 };
 
 const handleOAuth2Submit = async () => {
-    try {
-        const result = await User.signInOAuth2('2023212276', { serverEndpoint: 'http://127.0.0.1/api' });
-
-        // localhost env will prevent the browser from setting a persistent cookie
-        // so we need to set the cookie manually
-        if (window.location.host === '127.0.0.1:5173' || window.location.host === 'localhost:5173') {
-            setCookie('token', result.token);
-        }
-
-        if (result.student) {
-            setStorageItem('student', JSON.stringify(result.student));
-        } else {
-            setStorageItem('admin', JSON.stringify(result.admin));
-        }
-        setMessage({
-            type: 'success',
-            message: '登录成功',
-        });
-        setTimeout(() => {
-            router.push('/query-ticket');
-        }, 3000);
-    } catch (error) {
-        setMessage({
-            type: 'error',
-            message: error instanceof Error ? error.message : '登录失败，请检查账号和密码',
-        });
-        loading.value = false;
-    }
+    window.location.href =
+        'https://ids.hit.edu.cn/authserver/oauth2.0/authorize?response_type=code&client_id=1356904356676272128&redirect_uri=http://2ketang.hitwh.edu.cn/api/user/oauth2/sign-in&state=1';
 };
 </script>
 
