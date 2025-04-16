@@ -15,6 +15,7 @@ interface Model {
     maxPoints: number;
 }
 
+const emit = defineEmits(['checkTicket']);
 let details = ref<Model[]>([]),
     status = ref(0);
 
@@ -102,6 +103,7 @@ const addDetail = () => {
             </thead>
             <tbody>
                 <DetailRow
+                    @check-ticket="(detailId: any) => emit('checkTicket', detailId)"
                     v-for="detail in details"
                     :key="detail.id"
                     :activity-id="id"

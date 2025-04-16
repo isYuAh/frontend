@@ -102,7 +102,7 @@ export class Ticket {
         const response = await fetch(props.serverEndpoint + '/activity/' + activityId + '/ticket', {
             headers: {
                 Authorization: getCookie('token') || '',
-            },
+            }
         });
         const json = await response.json();
         if (response.ok) {

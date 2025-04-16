@@ -3,9 +3,8 @@ import { devConfig } from '@utils/devConfig';
 import { inject, ref } from 'vue';
 import InputText from '@components/input-text.vue';
 import { ActivityDetail } from '@models/detail';
-
 const { setMessage } = inject('banner') as any;
-const emit = defineEmits(['deleteTemporaryDetail']);
+const emit = defineEmits(['deleteTemporaryDetail', 'checkTicket']);
 
 interface DetailView {
     id: string;
@@ -118,6 +117,9 @@ function handleDelete() {
                 <a class="m-1 text-red-500 underline dark:text-red-200" href="?" @click.prevent="handleDelete">删除</a>
             </template>
             <template v-else>无</template>
+            <a class="text-primary dark:text-primary-200 m-1 underline" href="?" @click.prevent="emit('checkTicket', detail.id)"
+                >加分条</a
+            >
         </td>
     </tr>
 </template>

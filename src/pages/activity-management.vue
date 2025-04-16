@@ -5,10 +5,11 @@ import { computed, inject, reactive, ref } from 'vue';
 import Spinner from '@components/spinner.vue';
 import ActivityRow from '@components/activity-row.vue';
 import { GoodDate } from '@utils/datetime';
-import ActivityDetailTab from '@pages/activity-detail-tab.vue';
 import ActivityTab from '@pages/activity-tab.vue';
 import InputSelect from '@components/input-select.vue';
-import ActivityReviewTab from '@components/activity-review-tab.vue';
+import ActivityReviewTab from '@pages/activity-review-tab.vue';
+import ActivityTicketTab from '@pages/activity-ticket-tab.vue';
+import ActivityDetailTab from '@pages/activity-detail-tab.vue';
 import { devConfig } from '@utils/devConfig';
 
 const { setMessage } = inject('banner') as any;
@@ -29,6 +30,7 @@ let activities = ref<Model[]>([]),
     limit = 50,
     offset = ref(0),
     activeID = ref<string>(),
+    activeDetailId = ref<string>(),
     currentAction = ref<string>(),
     count = ref(0);
 
@@ -85,14 +87,15 @@ const config = reactive({
 const handleQuery = async (_: boolean = false) => {
         status.value = 0;
         activeID.value = '';
+        activeDetailId.value = '';
         currentAction.value = '';
 
         try {
             count.value = await Activity.listCount(parseInt(state.value), {
-                serverEndpoint: devConfig.serverEndpoint
-            })
+                serverEndpoint: devConfig.serverEndpoint,
+            });
             const t = await Activity.list(limit, offset.value, parseInt(state.value), {
-                serverEndpoint: devConfig.serverEndpoint
+                serverEndpoint: devConfig.serverEndpoint,
             });
             activities.value = t.map((activity) => {
                 return {
@@ -100,7 +103,7 @@ const handleQuery = async (_: boolean = false) => {
                     name: activity.name,
                     date: activity.date,
                     state: activity.state,
-                    actions: ['活动事项', '审核', '活动详情', '加分条'],
+                    actions: ['活动事项', '审核', '活动详情'],
                 };
             });
             setMessage({
@@ -284,19 +287,34 @@ handleQuery();
         <activity-detail-tab
             v-if="currentAction === '活动事项'"
             :id="activeID"
+            :key="activeID"
             :editable="[0, 3].indexOf(activities.find((a) => a.id === activeID)?.state ?? -1) != -1"
+            @checkTicket="
+                (detailId) => {
+                    activeDetailId = detailId;
+                    currentAction = '加分条';
+                }
+            "
         />
         <activity-tab
             v-if="currentAction === '活动详情'"
             :id="activeID"
+            :key="activeID"
             :editable="[0, 3].indexOf(activities.find((a) => a.id === activeID)?.state ?? -1) != -1"
             :on-saved="onActivitySaved"
         />
         <activity-review-tab
             v-if="currentAction === '审核'"
             :id="activeID"
+            :key="activeID"
             :activityCreatable="[0, 3].indexOf(activities.find((a) => a.id === activeID)?.state ?? -1) != -1"
             :ticketCreatable="[2, 6].indexOf(activities.find((a) => a.id === activeID)?.state ?? -1) != -1"
+        />
+        <activity-ticket-tab
+            v-if="currentAction === '加分条' && activeDetailId !== ''"
+            :id="activeID"
+            :key="activeID"
+            :activeDetailId="activeDetailId!"
         />
     </div>
     <p v-if="status === 2">
