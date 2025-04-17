@@ -16,8 +16,7 @@ export class Ticket {
     type: TicketType;
     points: number;
     date: GoodDate;
-    updatedAt?: Date;
-    deletedAt?: Date;
+    updatedAt: GoodDate;
 
     activity?: Activity;
 
@@ -29,8 +28,7 @@ export class Ticket {
         type: number,
         points: number,
         date: string,
-        updatedAt?: Date,
-        deletedAt?: Date,
+        updatedAt: string,
         activity?: Activity
     ) {
         this.id = id;
@@ -40,8 +38,7 @@ export class Ticket {
         this.type = type;
         this.points = points;
         this.date = GoodDate.fromString(date);
-        this.updatedAt = updatedAt;
-        this.deletedAt = deletedAt;
+        this.updatedAt = GoodDate.fromString(updatedAt);
         this.activity = activity;
     }
 
@@ -54,8 +51,7 @@ export class Ticket {
             json.type,
             json.points,
             json.date,
-            json.updatedAt ? new Date(json.updatedAt) : undefined,
-            json.deletedAt ? new Date(json.deletedAt) : undefined,
+            json.updatedAt,
             json.activity ? Activity.fromJSON(json.activity) : undefined
         );
     }
@@ -65,7 +61,7 @@ export class Ticket {
     }
 
     static template(): Ticket {
-        return new Ticket('', '', '', '', 0, 0, '2025-01-01');
+        return new Ticket('', '', '', '', 0, 0, '2025-01-01', '2025-01-01');
     }
 
     static queryStudentTicket = async (
@@ -131,13 +127,14 @@ export class Ticket {
         props: { serverEndpoint?: string }
     ) => {
         const response = await fetch(props.serverEndpoint + '/activity/' + activityId + '/ticket/new', {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: getCookie('token') || '',
-            },
-            body: JSON.stringify(data),
-        }), json = await response.json();
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: getCookie('token') || '',
+                },
+                body: JSON.stringify(data),
+            }),
+            json = await response.json();
 
         if (response.ok) {
             return Ticket.fromJSON(json.data);

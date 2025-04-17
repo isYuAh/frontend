@@ -121,7 +121,7 @@ watch(
                         <th class="px-6 py-3" scope="col">学生</th>
                         <th class="px-6 py-3" scope="col">类型</th>
                         <th class="px-6 py-3" scope="col">分数</th>
-                        <th class="px-6 py-3" scope="col">日期</th>
+                        <th class="px-6 py-3" scope="col">更新时间</th>
                         <th class="px-6 py-3" scope="col">操作</th>
                     </tr>
                 </thead>
@@ -135,7 +135,7 @@ watch(
                         <td class="px-6 py-4">{{ ticket.student }}</td>
                         <td class="px-6 py-4">{{ ticket.type === 0 ? '日常' : '个性' }}</td>
                         <td class="px-6 py-4">{{ ticket.points / 100 }}</td>
-                        <td class="px-6 py-4">{{ ticket.date.toISODate() }}</td>
+                        <td class="px-6 py-4">{{ ticket.updatedAt.toISODate() }}</td>
                         <td class="px-6 py-4">
                             <button
                                 class="rounded bg-red-500 px-4 py-2 font-bold text-white hover:bg-red-700"
