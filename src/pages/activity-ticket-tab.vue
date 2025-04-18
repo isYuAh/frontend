@@ -4,6 +4,7 @@ import { devConfig } from '@/utils/devConfig';
 import { inject, ref, watch } from 'vue';
 import papaparse from 'papaparse'
 import Spinner from '@components/spinner.vue';
+import TicketRow from '@/components/ticket-row.vue';
 
   const {
     id,
@@ -20,6 +21,7 @@ import Spinner from '@components/spinner.vue';
     status.value = 0;
     try {
       const res = await Ticket.list(id, {serverEndpoint: devConfig.serverEndpoint});
+      console.log(res, '@getTicket');
       tickets.value = res.data;
       status.value = 1;
       setMessage({
@@ -35,19 +37,6 @@ import Spinner from '@components/spinner.vue';
     student: string;
     type: number;
     points: number;
-  }
-  const handleDeleteTicket = async (ticket: Ticket) => {
-    Ticket.delete(id, ticket.id, {serverEndpoint: devConfig.serverEndpoint}).then(() => {
-      setMessage({
-        type:'success',
-        message: '成功删除加分条信息',
-      }); 
-    }).catch((e: Error) => {
-      setMessage({
-        type:'error',
-        message: e.message,
-      }); 
-    })
   }
   const uploadTicket = async () => {
     const input = document.createElement('input');
@@ -140,14 +129,9 @@ import Spinner from '@components/spinner.vue';
           </thead>
           <tbody>
               <tr v-for="ticket in tickets" :key="ticket.id" class="border-b bg-white dark:border-gray-700 dark:bg-gray-800">
-                  <td class="px-6 py-4">{{ ticket.id }}</td>
-                  <td class="px-6 py-4">{{ ticket.student }}</td>
-                  <td class="px-6 py-4">{{ ticket.type === 0 ? '日常' : '个性' }}</td>
-                  <td class="px-6 py-4">{{ ticket.points / 100 }}</td>
-                  <td class="px-6 py-4">{{ ticket.date.toISODate() }}</td>
-                  <td class="px-6 py-4">
-                      <button class="rounded bg-red-500 px-4 py-2 font-bold text-white hover:bg-red-700" @click="handleDeleteTicket(ticket)">删除</button>
-                  </td>
+                  <TicketRow @update="getTicket" :id="id" :ticket="ticket">
+
+                  </TicketRow>
               </tr>
           </tbody>
       </table>
