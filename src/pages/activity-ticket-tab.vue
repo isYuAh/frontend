@@ -2,17 +2,14 @@
 import { Ticket } from '@/models/ticket';
 import { devConfig } from '@/utils/devConfig';
 import { inject, ref, watch } from 'vue';
-import papaparse from 'papaparse'
 import Spinner from '@components/spinner.vue';
-import TicketRow from '@/components/ticket-row.vue';
 import { parseCsv } from '@utils/papaparse';
+import TicketRow from '@components/ticket-row.vue';
 
-  const {
-    id,
-    activeDetailId
-  } = defineProps<{
+const { id, activeDetailId, editable } = defineProps<{
     id: string;
     activeDetailId: string;
+    editable: boolean;
 }>();
 const status = ref(0);
 const tickets = ref<Ticket[]>([]);
@@ -21,13 +18,12 @@ const { setMessage } = inject('banner') as any;
 const getTicket = async () => {
     status.value = 0;
     try {
-      const res = await Ticket.list(id, {serverEndpoint: devConfig.serverEndpoint});
-      tickets.value = res.data;
-      status.value = 1;
-      setMessage({
-          type: 'success',
-          message: '成功获取加分条信息',
-      });
+        tickets.value = await Ticket.list(id, { serverEndpoint: devConfig.serverEndpoint });
+        status.value = 1;
+        setMessage({
+            type: 'success',
+            message: '成功获取加分条信息',
+        });
     } catch (e) {
         status.value = 2;
     }
@@ -40,96 +36,56 @@ interface TicketData {
     points: number;
 }
 
-const handleDeleteTicket = async (ticket: Ticket) => {
-    Ticket.delete(id, ticket.id, { serverEndpoint: devConfig.serverEndpoint })
-        .then(() => {
-            setMessage({
-                type: 'success',
-                message: '成功删除加分条信息',
-            });
-        })
-        .catch((e: Error) => {
-            setMessage({
-                type: 'error',
-                message: e.message,
-            });
-        });
-};
 const uploadTicket = async () => {
     const input = document.createElement('input');
     input.type = 'file';
     input.accept = '.csv';
     input.onchange = async (e) => {
-      const file = (e.target as HTMLInputElement).files?.[0];
-      if (!file) return;
-      papaparse.parse(file, {
-        header: true,
-        skipEmptyLines: true,
-        complete: (results) => {
-          console.log(results.data, results);
-          const tickets: TicketData[] = results.data.map((row: any) => {
-           return {
-            detailId: activeDetailId,
-            type: Number(row['类型']),
-            points: Number(row['分数'] * 100),
-            student: row['学号']
-           }
-          })
-          Ticket.create(id, tickets, {serverEndpoint: devConfig.serverEndpoint}).then(() => {
-            setMessage({
-              type:'success',
-              message: '成功上传加分条信息',
-            });
-            getTicket();
-          }).catch((e: Error) => {
-            setMessage({
-              type:'error',
-              message: e.message,
-            });
-          })
-        },
-        error: (error) => {
-          console.error('Error parsing CSV:', error);
-          setMessage({
-            type:'error',
-            message: '上传加分条信息失败',
-          });
-        }
-      });
-    }
         const file = (e.target as HTMLInputElement).files?.[0];
         if (!file) return;
 
-        const result = await parseCsv(file);
-        const tickets: TicketData[] = result.data.map((row: any) => {
-            return {
-                detailId: activeDetailId,
-                type: Number(row['类型']),
-                points: Number(row['分数'] * 100),
-                student: row['学号'],
-            };
-        });
-        Ticket.create(id, tickets, { serverEndpoint: devConfig.serverEndpoint })
-            .then(() => {
-                setMessage({
-                    type: 'success',
-                    message: '成功上传加分条信息',
-                });
-                getTicket();
-            })
-            .catch((e: Error) => {
-                setMessage({
-                    type: 'error',
-                    message: e.message,
-                });
+        try {
+            const result = await parseCsv(file);
+            const tickets: TicketData[] = result.data.map((row: any) => {
+                return {
+                    detailId: activeDetailId,
+                    type: Number(row['类型']),
+                    points: Number(row['分数'] * 100),
+                    student: row['学号'],
+                };
             });
+            Ticket.create(id, tickets, { serverEndpoint: devConfig.serverEndpoint })
+                .then(() => {
+                    setMessage({
+                        type: 'success',
+                        message: '成功上传加分条信息',
+                    });
+                    getTicket();
+                })
+                .catch((e: Error) => {
+                    setMessage({
+                        type: 'error',
+                        message: e.message,
+                    });
+                });
+        } catch (err) {
+            console.error('Error parsing CSV:', err);
+            setMessage({
+                type: 'error',
+                message: '上传加分条信息失败',
+            });
+        }
     };
     input.click();
 };
-  }
-  watch([() => id, () => activeDetailId], () => {
-    getTicket();
-  }, {immediate: true});
+
+watch(
+    [() => id, () => activeDetailId],
+    () => {
+        getTicket();
+    },
+    { immediate: true }
+);
 </script>
 <template>
     <h2 class="mb-4 text-2xl font-black">加分条管理</h2>
@@ -142,17 +98,21 @@ const uploadTicket = async () => {
                 >
                     事项加分条列表
                     <p class="mt-1 text-sm font-normal text-gray-500 dark:text-gray-400">
-                        <template>查看活动加分条。</template>
-                        或者
+                        查看活动加分条。或者
                         <a class="text-primary dark:text-primary-200 underline" href="?" @click.prevent="getTicket">
                             重新加载
-                            <template> （这会丢失未提交的数据）</template>
                         </a>
-                        <br />
-                        或者
-                        <a class="text-primary dark:text-primary-200 underline" href="?" @click.prevent="uploadTicket">
-                            上传加分条csv
-                        </a>
+                        （这会丢失未提交的数据）
+                        <template v-if="editable">
+                            ，或者
+                            <a
+                                class="text-primary dark:text-primary-200 underline"
+                                href="?"
+                                @click.prevent="uploadTicket"
+                            >
+                                上传加分条 CSV 表格
+                            </a>
+                        </template>
                     </p>
                 </caption>
                 <thead class="bg-gray-100 text-xs text-gray-700 uppercase dark:bg-gray-700 dark:text-gray-400">
@@ -161,7 +121,7 @@ const uploadTicket = async () => {
                         <th class="px-6 py-3" scope="col">学生</th>
                         <th class="px-6 py-3" scope="col">类型</th>
                         <th class="px-6 py-3" scope="col">分数</th>
-                        <th class="px-6 py-3" scope="col">更新时间</th>
+                        <th class="px-6 py-3" scope="col">活动日期</th>
                         <th class="px-6 py-3" scope="col">操作</th>
                     </tr>
                 </thead>
@@ -169,21 +129,9 @@ const uploadTicket = async () => {
                     <tr
                         v-for="ticket in tickets"
                         :key="ticket.id"
-                        class="border-b bg-white dark:border-gray-700 dark:bg-gray-800"
+                        class="border-gray-200 bg-white not-last:border-b dark:border-gray-700 dark:bg-gray-800"
                     >
-                        <td class="px-6 py-4">{{ ticket.id }}</td>
-                        <td class="px-6 py-4">{{ ticket.student }}</td>
-                        <td class="px-6 py-4">{{ ticket.type === 0 ? '日常' : '个性' }}</td>
-                        <td class="px-6 py-4">{{ ticket.points / 100 }}</td>
-                        <td class="px-6 py-4">{{ ticket.updatedAt.toISODate() }}</td>
-                        <td class="px-6 py-4">
-                            <button
-                                class="rounded bg-red-500 px-4 py-2 font-bold text-white hover:bg-red-700"
-                                @click="handleDeleteTicket(ticket)"
-                            >
-                                删除
-                            </button>
-                        </td>
+                        <TicketRow :id="id" :ticket="ticket" @update="getTicket" />
                     </tr>
                 </tbody>
             </table>
