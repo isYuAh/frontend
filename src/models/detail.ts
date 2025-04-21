@@ -25,7 +25,11 @@ export class ActivityDetail {
     static template = new ActivityDetail('', '', '', 0);
 
     static list = async (activityId: string, props: { serverEndpoint?: string }) => {
-        const response = await fetch(props.serverEndpoint + '/activity/' + activityId + '/detail');
+        const response = await fetch(props.serverEndpoint + '/activity/' + activityId + '/detail', {
+            headers: {
+                Authorization: getCookie('token') || '',
+            },
+        });
         const json = await response.json();
         if (response.ok) {
             return ActivityDetail.fromJSONList(json.data);

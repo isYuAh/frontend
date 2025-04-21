@@ -117,7 +117,12 @@ export class Activity {
 
     static list = async (limit: number, offset: number, state: number, props: { serverEndpoint?: string }) => {
         const response = await fetch(
-            props.serverEndpoint + '/activity' + `?limit=${limit}&offset=${offset}&state=${state}`
+            `${props.serverEndpoint}/activity?limit=${limit}&offset=${offset}&state=${state}`,
+            {
+                headers: {
+                    Authorization: getCookie('token') || '',
+                },
+            }
         );
         const json = await response.json();
         if (response.ok) {
@@ -135,8 +140,34 @@ export class Activity {
         }
     };
 
+    static listCount = async (state: number, props: { serverEndpoint?: string }) => {
+        const response = await fetch(`${props.serverEndpoint}/activity?state=${state}&count=true`, {
+            headers: {
+                Authorization: getCookie('token') || '',
+            },
+        });
+        const json = await response.json();
+        if (response.ok) {
+            return json.data;
+        } else if (response.status === 400) {
+            throw new Error(errorBadRequest);
+        } else if (response.status === 403) {
+            throw new Error(errorForbidden);
+        } else if (response.status === 404) {
+            throw new Error(errorNotFound);
+        } else if (response.status === 500) {
+            throw new Error(errorInternal);
+        } else {
+            throw new Error(json['error']);
+        }
+    };
+
     static get = async (id: string, props: { serverEndpoint?: string }) => {
-        const response = await fetch(props.serverEndpoint + '/activity/' + id);
+        const response = await fetch(props.serverEndpoint + '/activity/' + id, {
+            headers: {
+                Authorization: getCookie('token') || '',
+            },
+        });
         const json = await response.json();
         if (response.ok) {
             return Activity.fromJSON(json.data);

@@ -9,6 +9,7 @@ import { setStorageItem } from '@utils/storage';
 import TextInput from '@components/input-text.vue';
 import Spinner from '@components/spinner.vue';
 import Logo from '@components/logo.vue';
+import { devConfig } from '@utils/devConfig';
 
 const { setMessage } = inject('banner') as any;
 
@@ -58,19 +59,16 @@ const handleSubmit = async () => {
         loading.value = false;
     }
 };
-
-const handleOAuth2Submit = async () => {
-    window.location.href =
-        'https://ids.hit.edu.cn/authserver/oauth2.0/authorize?response_type=code&client_id=1356904356676272128&redirect_uri=http://2ketang.hitwh.edu.cn/api/user/oauth2/sign-in&state=1';
-};
 </script>
 
 <template>
     <div class="w-full max-w-md rounded-lg bg-white/95 p-8 shadow-lg dark:bg-gray-900/95">
-        <div class="mx-auto mb-8 flex items-center text-lg font-bold text-black dark:text-white">
-            <Logo class="h-14" />
-            <span>| 加分系统</span>
-        </div>
+        <router-link to="/">
+            <div class="mx-auto mb-8 flex items-center text-lg font-bold text-black dark:text-white">
+                <Logo class="h-14" />
+                <span>| 加分系统</span>
+            </div>
+        </router-link>
 
         <div class="mb-6 text-center">
             <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-100">用户登录</h2>
@@ -108,12 +106,12 @@ const handleOAuth2Submit = async () => {
             <p class="h-6 px-4 text-center text-gray-600 dark:text-gray-400">其他登录方法</p>
             <div class="h-0.5 flex-1 bg-gray-600 dark:bg-gray-400" />
         </div>
-        <button
+        <a
             class="mx-auto block w-fit cursor-pointer rounded-full border border-gray-400 bg-white px-8 py-2 font-medium hover:bg-gray-100 dark:border-gray-600 dark:bg-gray-900 dark:hover:bg-gray-800"
-            @click="handleOAuth2Submit"
+            :href="devConfig.serverEndpoint + '/user/oauth2/redirect'"
         >
             <span class="material-symbols-rounded align-middle">encrypted</span>
             统一身份认证登录
-        </button>
+        </a>
     </div>
 </template>

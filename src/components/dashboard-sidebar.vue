@@ -36,8 +36,7 @@ const sidebarItems: SidebarItem[] = [
 </script>
 
 <template>
-    <!-- placeholder to hold the width -->
-    <div class="h-full w-20 border-r border-gray-200 p-4 dark:border-gray-700" />
+    <div class="h-full w-19 min-w-19 border-r border-gray-200 p-4 dark:border-gray-700" />
     <div class="absolute z-10 mx-3 my-6 flex h-[calc(100%-3rem)] flex-col justify-between space-y-4">
         <div class="flex flex-col space-y-2">
             <router-link

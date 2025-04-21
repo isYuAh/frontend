@@ -51,8 +51,8 @@ provide('banner', {
                 <app-header />
                 <div class="relative flex flex-1 overflow-hidden">
                     <DashboardSidebar />
-                    <div class="flex flex-1 flex-col">
-                        <router-view class="h-full flex-1 overflow-y-auto px-8" />
+                    <div class="flex w-[calc(100%-76px)] flex-1 flex-col">
+                        <router-view class="h-full w-full flex-1 overflow-x-hidden overflow-y-auto px-8" />
                         <app-footer class="w-full border-t border-gray-200 dark:border-gray-700" />
                     </div>
                 </div>

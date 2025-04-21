@@ -118,7 +118,7 @@ if (!isCreatingNewActivity) {
             </form>
         </template>
         <div class="w-md rounded-lg border p-4">
-            <h3 class="mb-4 text-2xl font-black" v-if="editable">预览活动信息</h3>
+            <h3 v-if="editable" class="mb-4 text-2xl font-black">预览活动信息</h3>
             <activity-preview :model="activity" />
         </div>
     </div>

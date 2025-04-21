@@ -52,23 +52,6 @@ export class User {
             throw new Error(json.error);
         }
     };
-
-    static signInOAuth2 = async (_: string, props: { serverEndpoint?: string }) => {
-        const response = await fetch(props.serverEndpoint + '/user/oauth2/sign-in?code=2023212276', {
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        });
-        const json = await response.json();
-
-        if (response.ok) {
-            return json.data;
-        } else if (response.status === 403) {
-            throw new Error(errorForbidden);
-        } else {
-            throw new Error(json.message);
-        }
-    };
 }
 
 export class Admin extends User {
@@ -123,8 +106,12 @@ export class Admin extends User {
 
     static template = new Admin('', '', UserType.UserSU, '', '', '', '', new GoodDate(), undefined);
 
-    static listAdmin = async (props: { serverEndpoint?: string }) => {
-        const response = await fetch(props.serverEndpoint + '/user/admin');
+    static listAdmin = async (org: boolean, props: { serverEndpoint?: string }) => {
+        const response = await fetch(props.serverEndpoint + `/user/admin${org ? '?org=true' : ''}`, {
+            headers: {
+                Authorization: getCookie('token') || '',
+            },
+        });
         const json = await response.json();
         if (response.ok) {
             return Admin.fromJSONList(json.data);
@@ -136,7 +123,11 @@ export class Admin extends User {
     };
 
     static getAdmin = async (id: string, props: { serverEndpoint?: string }) => {
-        const response = await fetch(props.serverEndpoint + '/user/admin/' + id);
+        const response = await fetch(props.serverEndpoint + '/user/admin/' + id, {
+            headers: {
+                Authorization: getCookie('token') || '',
+            },
+        });
         const json = await response.json();
         if (response.ok) {
             return Admin.fromJSON(json.data);
