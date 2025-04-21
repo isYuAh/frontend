@@ -41,7 +41,7 @@ let admins = ref<Model[]>([]),
 const getAdmins = async () => {
     status.value = 0;
     try {
-        const t = await Admin.listAdmin({
+        const t = await Admin.listAdmin(false, {
             serverEndpoint: 'http://127.0.0.1/api',
         });
         admins.value = t.map((admin) => {

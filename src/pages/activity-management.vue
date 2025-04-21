@@ -103,7 +103,7 @@ const handleQuery = async (_: boolean = false) => {
                     name: activity.name,
                     date: activity.date,
                     state: activity.state,
-                    actions: ['活动事项', '审核', '活动详情'],
+                    actions: ['活动事项与加分条', '审核', '活动详情'],
                 };
             });
             setMessage({
@@ -283,18 +283,24 @@ handleQuery();
         </div>
     </div>
 
-    <div v-if="activeID" class="mt-8">
+    <div v-if="activeID" class="my-8 space-y-8">
         <activity-detail-tab
-            v-if="currentAction === '活动事项'"
+            v-if="currentAction === '活动事项与加分条'"
             :id="activeID"
             :key="activeID"
             :editable="[0, 3].indexOf(activities.find((a) => a.id === activeID)?.state ?? -1) != -1"
             @checkTicket="
                 (detailId) => {
                     activeDetailId = detailId;
-                    currentAction = '加分条';
                 }
             "
+        />
+        <activity-ticket-tab
+            v-if="currentAction === '活动事项与加分条' && activeDetailId !== ''"
+            :id="activeID"
+            :key="activeID"
+            :activeDetailId="activeDetailId!"
+            :editable="[2, 6].indexOf(activities.find((a) => a.id === activeID)?.state ?? -1) != -1"
         />
         <activity-tab
             v-if="currentAction === '活动详情'"
@@ -309,12 +315,6 @@ handleQuery();
             :key="activeID"
             :activityCreatable="[0, 3].indexOf(activities.find((a) => a.id === activeID)?.state ?? -1) != -1"
             :ticketCreatable="[2, 6].indexOf(activities.find((a) => a.id === activeID)?.state ?? -1) != -1"
-        />
-        <activity-ticket-tab
-            v-if="currentAction === '加分条' && activeDetailId !== ''"
-            :id="activeID"
-            :key="activeID"
-            :activeDetailId="activeDetailId!"
         />
     </div>
     <p v-if="status === 2">

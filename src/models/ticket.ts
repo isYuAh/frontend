@@ -176,10 +176,10 @@ export class Ticket {
         activityId: string,
         ticketId: string,
         data: {
-            detailId: string;
-            student: string;
-            type: number;
-            points: number;
+            detailId?: string;
+            student?: string;
+            type?: number;
+            points?: number;
         },
         props: { serverEndpoint?: string }
     ) => {
