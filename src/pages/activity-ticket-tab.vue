@@ -1,10 +1,11 @@
 <script lang="ts" setup>
 import { Ticket } from '@/models/ticket';
 import { devConfig } from '@/utils/devConfig';
-import { inject, ref, watch } from 'vue';
+import { inject, ref, toRaw, watch } from 'vue';
 import Spinner from '@components/spinner.vue';
 import { parseCsv } from '@utils/papaparse';
 import TicketRow from '@components/ticket-row.vue';
+import PendingTicketRow from '@/components/pending-ticket-row.vue';
 
 const { id, activeDetailId, editable } = defineProps<{
     id: string;
@@ -13,11 +14,13 @@ const { id, activeDetailId, editable } = defineProps<{
 }>();
 const status = ref(0);
 const tickets = ref<Ticket[]>([]);
+const pendingTickets = ref<Ticket[]>([]);
 const { setMessage } = inject('banner') as any;
 
 const getTicket = async () => {
     status.value = 0;
     try {
+        pendingTickets.value = [];
         tickets.value = await Ticket.list(id, { serverEndpoint: devConfig.serverEndpoint });
         status.value = 1;
         setMessage({
@@ -35,7 +38,49 @@ interface TicketData {
     type: number;
     points: number;
 }
-
+const addSignle = () => {
+    pendingTickets.value.push({
+        detailId: activeDetailId,
+        student: '',
+        type: 0,
+        points: 0,
+    } as any);
+}
+const uploadPending = async (singleData: Ticket | undefined) => {
+    let pendingData
+    if (pendingTickets.value.length === 0) {
+        setMessage({
+            type: 'error',
+            message: '没有待上传的加分条',
+        });
+        return
+    }else if (singleData) {
+        pendingData = [toRaw(singleData)]
+    }else {
+        pendingData = toRaw(pendingTickets.value as any as Ticket[])
+    }
+    Ticket.create(id, pendingData.map((t) => {
+        return {
+        detailId: activeDetailId,
+            student: t.student,
+            type: t.type,
+            points: t.points,
+        }
+    }), { serverEndpoint: devConfig.serverEndpoint })
+        .then(() => {
+            setMessage({
+                type: 'success',
+                message: '成功上传加分条信息',
+            });
+            getTicket();
+        })
+        .catch((e: Error) => {
+            setMessage({
+                type: 'error',
+                message: e.message,
+            });
+        });
+}
 const uploadTicket = async () => {
     const input = document.createElement('input');
     input.type = 'file';
@@ -112,6 +157,22 @@ watch(
                             >
                                 上传加分条 CSV 表格
                             </a>
+                            ，或者
+                            <a
+                                class="text-primary dark:text-primary-200 underline"
+                                href="?"
+                                @click.prevent="addSignle"
+                            >
+                                新增单条数据
+                            </a>
+                            ，或者
+                            <a
+                                class="text-primary dark:text-primary-200 underline"
+                                href="?"
+                                @click.prevent="uploadPending(undefined)"
+                            >
+                                上传新增的所有单条数据
+                            </a>
                         </template>
                     </p>
                 </caption>
@@ -132,6 +193,19 @@ watch(
                         class="border-gray-200 bg-white not-last:border-b dark:border-gray-700 dark:bg-gray-800"
                     >
                         <TicketRow :id="id" :ticket="ticket" @update="getTicket" />
+                    </tr>
+                    <tr
+                        v-for="ticket in pendingTickets"
+                        :key="ticket.id"
+                        class="border-gray-200 bg-white not-last:border-b dark:border-gray-700 dark:bg-gray-800"
+                    >
+                        <PendingTicketRow
+                            :ticket="ticket"
+                            :id="id"
+                            :key="ticket.id"
+                            @submit="(ticket) => uploadPending(ticket)"
+                            @delete="(ticket) => pendingTickets = pendingTickets.filter((t) => t.id !== ticket.id)"
+                        />
                     </tr>
                 </tbody>
             </table>
