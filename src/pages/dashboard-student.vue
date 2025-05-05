@@ -1,49 +1,19 @@
 <script setup lang="ts">
 import { setTitle } from '@utils/title';
-import { ref } from 'vue';
+import { ref, inject } from 'vue';
 import { devConfig } from '@utils/devConfig';
-import axios from 'axios';
 import * as XLSX from "xlsx";
 
 setTitle('学生管理页');
 
-// 用户类型枚举
-enum UserType {
-  UserSU,
-  UserInstructor,
-  UserLocalOrg,
-  UserLocalCommittee,
-  UserOrg,
-  UserCommittee,
-  UserStudent,
-}
-
-interface Student {
-  id: string;
-  name: string;
-  class: string;
-  college: string;
-}
-
-const students = ref<Student[]>([
-  { id: '20230001', name: '张三', class: '计科2201', college: '计算机科学与技术学院' },
-  { id: '20230002', name: '李四', class: '计科2202', college: '计算机科学与技术学院' },
-  { id: '20230003', name: '王五', class: '自动化2201', college: '自动化学院' },
-]);
-
 const uploading = ref(false);
 const sessionID = ref<string | null>(null);
 const csvData = ref<{classes?: any[]; schools?: any[]; students?: any[]}>({});
-
-function showMessage(msg: string, type: 'success' | 'error' = 'success') {
-  // 这里可以替换为全局消息组件
-  window.alert(msg);
-}
+const { setMessage } = inject('banner') as any;
 
 function downloadCSV(data: any[], headers: string[], filename: string) {
   const ws = XLSX.utils.json_to_sheet(data, { header: headers });
   const wb = XLSX.utils.book_new();
-  console.log(ws, wb, data);
   XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
   const wbout = XLSX.write(wb, { bookType: "csv", type: "array" });
   const blob = new Blob([wbout], { type: "text/csv;" });
@@ -93,9 +63,9 @@ async function handleUploadCSV() {
       const resData = await res.json();
       sessionID.value = resData.data.sessionID;
       csvData.value = resData.data;
-      showMessage('上传成功', 'success');
+      setMessage({ type: 'success', message: '上传成功' });
     } catch (err: any) {
-      showMessage('上传失败: ' + (err?.message || err), 'error');
+      setMessage({ type: 'error', message: '上传失败: ' + (err?.message || err) });
     } finally {
       uploading.value = false;
     }
@@ -105,7 +75,7 @@ async function handleUploadCSV() {
 
 async function handleConfirm() {
   if (!sessionID.value) {
-    showMessage('请先上传并获取sessionID', 'error');
+    setMessage({ type: 'error', message: '请先上传并获取sessionID' });
     return;
   }
   uploading.value = true;
@@ -124,9 +94,9 @@ async function handleConfirm() {
       } catch {}
       throw new Error(errMsg);
     }
-    showMessage('确认成功', 'success');
+    setMessage({ type: 'success', message: '确认成功' });
   } catch (err: any) {
-    showMessage('确认失败: ' + (err?.message || err), 'error');
+    setMessage({ type: 'error', message: '确认失败: ' + (err?.message || err) });
   } finally {
     uploading.value = false;
   }
@@ -134,7 +104,7 @@ async function handleConfirm() {
 function handleDownload(type: 'classes' | 'schools' | 'students', headers: string[], filename: string) {
   const data = csvData.value[type];
   if (!data || !Array.isArray(data) || !data.length) {
-    showMessage('请先上传数据', 'error');
+    setMessage({ type: 'error', message: '请先上传数据' });
     return;
   }
   downloadCSV(data, headers, filename);
