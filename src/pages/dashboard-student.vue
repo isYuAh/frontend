@@ -48,7 +48,8 @@ async function handleUploadCSV() {
       const res = await fetch(devConfig.serverEndpoint + '/user/student/import', {
         method: 'PUT',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + localStorage.getItem('token')
         },
         body: JSON.stringify({ csv })
       });
@@ -83,7 +84,8 @@ async function handleConfirm() {
     const res = await fetch(devConfig.serverEndpoint + '/user/student/import/' + sessionID.value, {
       method: 'PUT',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + localStorage.getItem('token')
       }
     });
     if (!res.ok) {
