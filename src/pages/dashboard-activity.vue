@@ -9,7 +9,6 @@ import ActivityCreate from '@pages/activity-create.vue';
 setTitle('活动管理页');
 
 const tab = ref(0);
-
 const tabs: string[] = ['活动审核', '活动管理', '创建活动'];
 </script>
 

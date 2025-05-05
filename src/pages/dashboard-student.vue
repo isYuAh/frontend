@@ -4,6 +4,8 @@ import { inject, ref } from 'vue';
 import { devConfig } from '@utils/devConfig';
 import * as XLSX from 'xlsx';
 import { getCookie } from '@utils/cookie';
+import { getStorageItem } from '@utils/storage';
+import { UserType } from '@models/user';
 
 const { setMessage } = inject('banner') as any;
 
@@ -140,77 +142,88 @@ async function handleDelete() {
         }
     }
 }
+
+let isSU: boolean;
+
+try {
+    isSU = JSON.parse(getStorageItem('admin') ?? '{}').type === UserType.UserSU;
+} catch (e) {
+    isSU = false;
+}
 </script>
 
 <template>
     <div class="mx-auto flex min-h-[60vh] w-full flex-col items-center justify-center px-4">
         <h1 class="mb-10 text-3xl font-black">学生管理页</h1>
-        <div class="m-4 rounded-lg border p-4">
-            <div class="mb-8 flex flex-wrap items-center justify-center gap-4">
-                <button
-                    :disabled="uploading"
-                    class="bg-primary-600 hover:bg-primary-700 disabled:bg-primary-900 dark:bg-primary-400 dark:hover:bg-primary-300 dark:disabled:bg-primary-100 rounded-lg px-6 py-3 text-lg font-semibold text-white shadow transition-colors disabled:cursor-not-allowed"
-                    type="button"
-                    @click="handleUploadCSV"
-                >
-                    上传 CSV
-                </button>
-                <button
-                    :disabled="uploading || !sessionID"
-                    class="bg-primary-600 hover:bg-primary-700 disabled:bg-primary-900 dark:bg-primary-400 dark:hover:bg-primary-300 dark:disabled:bg-primary-100 rounded-lg px-6 py-3 text-lg font-semibold text-white shadow transition-colors disabled:cursor-not-allowed"
-                    type="button"
-                    @click="() => handleDownload('classes', ['name', 'school'], '班级变化.csv')"
-                >
-                    下载班级变化
-                </button>
-                <button
-                    :disabled="uploading || !sessionID"
-                    class="bg-primary-600 hover:bg-primary-700 disabled:bg-primary-900 dark:bg-primary-400 dark:hover:bg-primary-300 dark:disabled:bg-primary-100 rounded-lg px-6 py-3 text-lg font-semibold text-white shadow transition-colors disabled:cursor-not-allowed"
-                    type="button"
-                    @click="() => handleDownload('schools', ['name'], '学院变化.csv')"
-                >
-                    下载学院变化
-                </button>
-                <button
-                    :disabled="uploading || !sessionID"
-                    class="bg-primary-600 hover:bg-primary-700 disabled:bg-primary-900 dark:bg-primary-400 dark:hover:bg-primary-300 dark:disabled:bg-primary-100 rounded-lg px-6 py-3 text-lg font-semibold text-white shadow transition-colors disabled:cursor-not-allowed"
-                    type="button"
-                    @click="() => handleDownload('students', ['class', 'oid', 'name', 'type'], '学生变化.csv')"
-                >
-                    下载学生变化
-                </button>
-                <button
-                    :disabled="uploading || !sessionID"
-                    class="bg-primary-600 hover:bg-primary-700 disabled:bg-primary-900 dark:bg-primary-400 dark:hover:bg-primary-300 dark:disabled:bg-primary-100 rounded-lg px-6 py-3 text-lg font-semibold text-white shadow transition-colors disabled:cursor-not-allowed"
-                    type="button"
-                    @click="handleConfirm"
-                >
-                    确认导入
-                </button>
+        <template v-if="isSU">
+            <div class="m-4 rounded-lg border p-4">
+                <div class="mb-8 flex flex-wrap items-center justify-center gap-4">
+                    <button
+                        :disabled="uploading"
+                        class="bg-primary-600 hover:bg-primary-700 disabled:bg-primary-900 dark:bg-primary-400 dark:hover:bg-primary-300 dark:disabled:bg-primary-100 rounded-lg px-6 py-3 text-lg font-semibold text-white shadow transition-colors disabled:cursor-not-allowed"
+                        type="button"
+                        @click="handleUploadCSV"
+                    >
+                        上传 CSV
+                    </button>
+                    <button
+                        :disabled="uploading || !sessionID"
+                        class="bg-primary-600 hover:bg-primary-700 disabled:bg-primary-900 dark:bg-primary-400 dark:hover:bg-primary-300 dark:disabled:bg-primary-100 rounded-lg px-6 py-3 text-lg font-semibold text-white shadow transition-colors disabled:cursor-not-allowed"
+                        type="button"
+                        @click="() => handleDownload('classes', ['name', 'school'], '班级变化.csv')"
+                    >
+                        下载班级变化
+                    </button>
+                    <button
+                        :disabled="uploading || !sessionID"
+                        class="bg-primary-600 hover:bg-primary-700 disabled:bg-primary-900 dark:bg-primary-400 dark:hover:bg-primary-300 dark:disabled:bg-primary-100 rounded-lg px-6 py-3 text-lg font-semibold text-white shadow transition-colors disabled:cursor-not-allowed"
+                        type="button"
+                        @click="() => handleDownload('schools', ['name'], '学院变化.csv')"
+                    >
+                        下载学院变化
+                    </button>
+                    <button
+                        :disabled="uploading || !sessionID"
+                        class="bg-primary-600 hover:bg-primary-700 disabled:bg-primary-900 dark:bg-primary-400 dark:hover:bg-primary-300 dark:disabled:bg-primary-100 rounded-lg px-6 py-3 text-lg font-semibold text-white shadow transition-colors disabled:cursor-not-allowed"
+                        type="button"
+                        @click="() => handleDownload('students', ['class', 'oid', 'name', 'type'], '学生变化.csv')"
+                    >
+                        下载学生变化
+                    </button>
+                    <button
+                        :disabled="uploading || !sessionID"
+                        class="bg-primary-600 hover:bg-primary-700 disabled:bg-primary-900 dark:bg-primary-400 dark:hover:bg-primary-300 dark:disabled:bg-primary-100 rounded-lg px-6 py-3 text-lg font-semibold text-white shadow transition-colors disabled:cursor-not-allowed"
+                        type="button"
+                        @click="handleConfirm"
+                    >
+                        确认导入
+                    </button>
+                </div>
+                <div>
+                    <p class="text-lg font-bold">更新学生过程：</p>
+                    <ol class="list-inside list-decimal">
+                        <li>选择包括需要更新的学生信息的 CSV 文件上传；</li>
+                        <li>下载检查发生变动的班级、学生、学院信息是否正确；</li>
+                        <li>点击“确认导入”，完成更新操作</li>
+                    </ol>
+                </div>
             </div>
-            <div>
-                <p class="text-lg font-bold">更新学生过程：</p>
-                <ol class="list-inside list-decimal">
-                    <li>选择包括需要更新的学生信息的 CSV 文件上传；</li>
-                    <li>下载检查发生变动的班级、学生、学院信息是否正确；</li>
-                    <li>点击“确认导入”，完成更新操作</li>
-                </ol>
+            <div class="m-4 rounded-lg border p-4">
+                <div class="mb-8">
+                    <button
+                        class="bg-primary-600 hover:bg-primary-700 disabled:bg-primary-900 dark:bg-primary-400 dark:hover:bg-primary-300 dark:disabled:bg-primary-100 rounded-lg px-6 py-3 text-lg font-semibold text-white shadow transition-colors disabled:cursor-not-allowed"
+                        type="button"
+                        @click="handleDelete"
+                    >
+                        清空学生、学院、班级记录
+                    </button>
+                </div>
+                <div>
+                    <p class="text-lg font-bold">清空学生操作：</p>
+                    <p>该操作用于在学生记录被污染时清空记录，便于重新导入干净的记录</p>
+                </div>
             </div>
-        </div>
-        <div class="m-4 rounded-lg border p-4">
-            <div class="mb-8">
-                <button
-                    class="bg-primary-600 hover:bg-primary-700 disabled:bg-primary-900 dark:bg-primary-400 dark:hover:bg-primary-300 dark:disabled:bg-primary-100 rounded-lg px-6 py-3 text-lg font-semibold text-white shadow transition-colors disabled:cursor-not-allowed"
-                    type="button"
-                    @click="handleDelete"
-                >
-                    清空学生、学院、班级记录
-                </button>
-            </div>
-            <div>
-                <p class="text-lg font-bold">清空学生操作：</p>
-                <p>该操作用于在学生记录被污染时清空记录，便于重新导入干净的记录</p>
-            </div>
-        </div>
+        </template>
+        <div v-else class="items-center justify-center text-lg font-bold">无权限管理学生，请联系超级管理员</div>
     </div>
 </template>
