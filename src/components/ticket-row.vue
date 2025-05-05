@@ -108,7 +108,7 @@ const handleCancel = () => {
             {{ temp.points / 100 }}
         </template>
     </td>
-    <td class="px-6 py-4">{{ temp.date.date.toLocaleDateString() }}</td>
+    <td class="px-6 py-4">{{ temp.date.toLocalizedString() }}</td>
     <td class="px-6 py-4">
         <template v-if="editing">
             <a class="text-primary dark:text-primary-200 m-1 underline" href="?" @click.prevent="handleCancel">取消</a>

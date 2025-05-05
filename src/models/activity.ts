@@ -136,7 +136,7 @@ export class Activity {
         } else if (response.status === 500) {
             throw new Error(errorInternal);
         } else {
-            throw new Error(json['error']);
+            throw new Error(json.message);
         }
     };
 
@@ -158,7 +158,7 @@ export class Activity {
         } else if (response.status === 500) {
             throw new Error(errorInternal);
         } else {
-            throw new Error(json['error']);
+            throw new Error(json.message);
         }
     };
 

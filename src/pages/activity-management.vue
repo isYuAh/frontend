@@ -287,7 +287,7 @@ handleQuery();
         <activity-detail-tab
             v-if="currentAction === '活动事项与加分条'"
             :id="activeID"
-            :key="activeID"
+            :key="activeID + currentAction"
             :editable="[0, 3].indexOf(activities.find((a) => a.id === activeID)?.state ?? -1) != -1"
             @checkTicket="
                 (detailId) => {
@@ -298,21 +298,21 @@ handleQuery();
         <activity-ticket-tab
             v-if="currentAction === '活动事项与加分条' && activeDetailId !== ''"
             :id="activeID"
-            :key="activeID"
+            :key="activeID + activeDetailId + currentAction"
             :activeDetailId="activeDetailId!"
             :editable="[2, 6].indexOf(activities.find((a) => a.id === activeID)?.state ?? -1) != -1"
         />
         <activity-tab
             v-if="currentAction === '活动详情'"
             :id="activeID"
-            :key="activeID"
+            :key="activeID + activeDetailId + currentAction"
             :editable="[0, 3].indexOf(activities.find((a) => a.id === activeID)?.state ?? -1) != -1"
             :on-saved="onActivitySaved"
         />
         <activity-review-tab
             v-if="currentAction === '审核'"
             :id="activeID"
-            :key="activeID"
+            :key="activeID + activeDetailId + currentAction"
             :activityCreatable="[0, 3].indexOf(activities.find((a) => a.id === activeID)?.state ?? -1) != -1"
             :ticketCreatable="[2, 6].indexOf(activities.find((a) => a.id === activeID)?.state ?? -1) != -1"
         />

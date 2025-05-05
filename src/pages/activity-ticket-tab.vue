@@ -179,7 +179,7 @@ watch(
                 <thead class="bg-gray-100 text-xs text-gray-700 uppercase dark:bg-gray-700 dark:text-gray-400">
                     <tr>
                         <th class="px-6 py-3" scope="col">ID</th>
-                        <th class="px-6 py-3" scope="col">学生</th>
+                        <th class="px-6 py-3" scope="col">学生（学号）</th>
                         <th class="px-6 py-3" scope="col">类型</th>
                         <th class="px-6 py-3" scope="col">分数</th>
                         <th class="px-6 py-3" scope="col">活动日期</th>

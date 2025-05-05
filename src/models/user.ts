@@ -38,6 +38,14 @@ export class User {
         return UserTypeString[this.type];
     }
 
+    static fromJSON(json: any): User {
+        return new User(json.id, json.name, json.type);
+    }
+
+    static fromJSONList(json: any): User[] {
+        return json.map((item: any) => User.fromJSON(item));
+    }
+
     static signOut = async (props: { serverEndpoint?: string }) => {
         const response = await fetch(props.serverEndpoint + '/user/sign-out', {
             method: 'POST',
@@ -118,7 +126,7 @@ export class Admin extends User {
         } else if (response.status === 400) {
             throw new Error(errorBadRequest);
         } else {
-            throw new Error(json['error']);
+            throw new Error(json.message);
         }
     };
 
@@ -134,7 +142,7 @@ export class Admin extends User {
         } else if (response.status === 404) {
             throw new Error(errorNotFound);
         } else {
-            throw new Error(json['error']);
+            throw new Error(json.message);
         }
     };
 

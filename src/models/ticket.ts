@@ -90,7 +90,7 @@ export class Ticket {
         } else if (response.status === 403) {
             throw new Error(errorForbidden);
         } else {
-            throw new Error(json['error']);
+            throw new Error(json.message);
         }
     };
 
@@ -98,7 +98,7 @@ export class Ticket {
         const response = await fetch(props.serverEndpoint + '/activity/' + activityId + '/ticket', {
             headers: {
                 Authorization: getCookie('token') || '',
-            }
+            },
         });
         const json = await response.json();
         if (response.ok) {
@@ -112,7 +112,7 @@ export class Ticket {
         } else if (response.status === 500) {
             throw new Error(errorInternal);
         } else {
-            throw new Error(json['error']);
+            throw new Error(json.message);
         }
     };
 
@@ -138,14 +138,8 @@ export class Ticket {
 
         if (response.ok) {
             return Ticket.fromJSON(json.data);
-        } else if (response.status === 400) {
-            throw new Error(errorBadRequest);
-        } else if (response.status === 403) {
-            throw new Error(errorForbidden);
-        } else if (response.status === 500) {
-            throw new Error(errorInternal);
         } else {
-            throw new Error(json['error']);
+            throw new Error(json.message);
         }
     };
 
@@ -168,7 +162,7 @@ export class Ticket {
         } else if (response.status === 500) {
             throw new Error(errorInternal);
         } else {
-            throw new Error(json['error']);
+            throw new Error(json.message);
         }
     };
 
@@ -202,7 +196,7 @@ export class Ticket {
         } else if (response.status === 500) {
             throw new Error(errorInternal);
         } else {
-            throw new Error(json['error']);
+            throw new Error(json.message);
         }
     };
 }

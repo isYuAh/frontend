@@ -49,7 +49,7 @@ const handleSubmit = async () => {
             message: '登录成功',
         });
         setTimeout(() => {
-            router.push('/dashboard');
+            router.push('/dashboard/admin');
         }, 3000);
     } catch (error) {
         setMessage({

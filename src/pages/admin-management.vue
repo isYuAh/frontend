@@ -135,4 +135,7 @@ const addAdmin = () => {
         无法获取管理员信息；
         <a class="text-primary dark:text-primary-200 underline" href="?" @click.prevent="getAdmins">重试</a>
     </p>
+    <p class="mt-8 font-bold">
+        注意，当添加新用户时，若选择了新的用户作为指导老师/上级团委，该操作将不生效，请在保存好指导老师/上级团委后再选择组织的指导老师/上级团委。
+    </p>
 </template>

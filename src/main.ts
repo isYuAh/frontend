@@ -7,7 +7,6 @@ import { createRouter, createWebHistory } from 'vue-router';
 const HomePage = () => import('@pages/home.vue');
 const AboutPage = () => import('@pages/about.vue');
 const SignInPage = () => import('@pages/sign-in.vue');
-const DashboardHomePage = () => import('@pages/dashboard-home.vue');
 const DashboardAdminPage = () => import('@pages/dashboard-admin.vue');
 const DashboardActivityPage = () => import('@pages/dashboard-activity.vue');
 const DashboardStudentPage = () => import('@pages/dashboard-student.vue');
@@ -19,7 +18,6 @@ const routes = [
     { path: '/', component: HomePage },
     { path: '/about', component: AboutPage },
     { path: '/sign-in', component: SignInPage },
-    { path: '/dashboard', component: DashboardHomePage },
     { path: '/dashboard/admin', component: DashboardAdminPage },
     { path: '/dashboard/activity', component: DashboardActivityPage },
     { path: '/dashboard/student', component: DashboardStudentPage },

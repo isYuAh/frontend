@@ -127,7 +127,6 @@ async function handleDelete() {
             const response = await fetch(devConfig.serverEndpoint + '/user/student', {
                     method: 'DELETE',
                     headers: {
-                        'Content-Type': 'application/json',
                         Authorization: getCookie('token') || '',
                     },
                 }),
@@ -140,6 +139,32 @@ async function handleDelete() {
             setMessage({ message: '清空失败', type: 'error' });
             console.error(err);
         }
+    }
+}
+
+async function handleExport() {
+    try {
+        const response = await fetch(devConfig.serverEndpoint + '/user/student/export', {
+            method: 'GET',
+            headers: {
+                Authorization: getCookie('token') || '',
+            },
+        });
+        if (!response.ok) {
+            setMessage({ message: '导出失败', type: 'error' });
+            return;
+        }
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = '学生信息.csv';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    } catch (err) {
+        setMessage({ message: '导出失败', type: 'error' });
     }
 }
 
@@ -206,6 +231,30 @@ try {
                         <li>下载检查发生变动的班级、学生、学院信息是否正确；</li>
                         <li>点击“确认导入”，完成更新操作</li>
                     </ol>
+                </div>
+            </div>
+            <div class="m-4 rounded-lg border p-4">
+                <div class="mb-8">
+                    <button
+                        class="bg-primary-600 hover:bg-primary-700 disabled:bg-primary-900 dark:bg-primary-400 dark:hover:bg-primary-300 dark:disabled:bg-primary-100 rounded-lg px-6 py-3 text-lg font-semibold text-white shadow transition-colors disabled:cursor-not-allowed"
+                        type="button"
+                        @click="handleExport"
+                    >
+                        导出学生、班级、学院信息
+                    </button>
+                </div>
+                <div>
+                    <p class="text-lg font-bold">导出学生操作：</p>
+                    <p>该操作用于导出学生、班级、学院记录为 CSV 表格便于检查错误</p>
+                    <p>
+                        Excel 无法正确识别编码？查看 Microsoft 给出的解决方案：
+                        <a
+                            class="text-primary font-medium italic hover:underline"
+                            href="https://support.microsoft.com/zh-cn/office/%E5%9C%A8-excel-%E4%B8%AD%E6%AD%A3%E7%A1%AE%E6%89%93%E5%BC%80-csv-utf-8-%E6%96%87%E4%BB%B6-8a935af5-3416-4edd-ba7e-3dfd2bc4a032"
+                        >
+                            在 Excel 中正确打开 CSV UTF-8 文件
+                        </a>
+                    </p>
                 </div>
             </div>
             <div class="m-4 rounded-lg border p-4">

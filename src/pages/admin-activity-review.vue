@@ -277,12 +277,12 @@ handleQuery();
                         :key="review.id"
                         class="divide-y divide-solid divide-gray-200 bg-white hover:bg-gray-50 dark:divide-gray-700 dark:bg-gray-800 dark:hover:bg-gray-600"
                     >
-                        <td class="px-6 py-4">{{ review.activityId }}</td>
+                        <td class="px-6 py-4">{{ review.activity?.name }}</td>
                         <td class="px-6 py-4">{{ review.type === 0 ? '活动内容审核' : '加分条审核' }}</td>
-                        <td class="px-6 py-4">{{ review.owner }}</td>
-                        <td class="px-6 py-4">{{ review.instructor }}</td>
+                        <td class="px-6 py-4">{{ review.ownerUser?.name }}</td>
+                        <td class="px-6 py-4">{{ review.instructorUser?.name }}</td>
                         <td class="px-6 py-4">{{ review.instructorComment }}</td>
-                        <td class="px-6 py-4">{{ review.committee }}</td>
+                        <td class="px-6 py-4">{{ review.committeeUser?.name }}</td>
                         <td class="px-6 py-4">{{ review.committeeComment }}</td>
                         <td class="px-6 py-4">
                             <span
@@ -307,7 +307,7 @@ handleQuery();
                                 }}
                             </span>
                         </td>
-                        <td class="px-6 py-4">{{ review.updatedAt?.toLocalizedDateString() ?? '日期有误' }}</td>
+                        <td class="px-6 py-4">{{ review.updatedAt?.toLocalizedString() ?? '日期有误' }}</td>
                         <td class="px-6 py-4">
                             <div class="flex space-x-2">
                                 <button

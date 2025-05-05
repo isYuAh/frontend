@@ -13,11 +13,6 @@ interface SidebarItem {
 
 const sidebarItems: SidebarItem[] = [
     {
-        path: '/dashboard',
-        icon: 'home',
-        label: '首页',
-    },
-    {
         path: '/dashboard/admin',
         icon: 'account_circle',
         label: '管理员',

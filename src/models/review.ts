@@ -1,6 +1,8 @@
 import { getCookie } from '@utils/cookie';
 import { errorBadRequest, errorForbidden, errorInternal, errorNotFound } from '@utils/error-msg';
 import { GoodDate } from '@utils/datetime';
+import { Activity } from '@models/activity';
+import { User } from '@models/user';
 
 export enum ReviewState {
     ReviewInstructorPending,
@@ -22,6 +24,11 @@ export class Review {
     state: ReviewState;
     updatedAt?: GoodDate;
 
+    activity?: Activity;
+    ownerUser?: User;
+    instructorUser?: User;
+    committeeUser?: User;
+
     constructor(
         id: string,
         activityId: string,
@@ -32,7 +39,11 @@ export class Review {
         committee: string,
         committeeComment: string,
         state: number,
-        updatedAt?: GoodDate
+        updatedAt?: GoodDate,
+        activity?: Activity,
+        ownerUser?: User,
+        instructorUser?: User,
+        committeeUser?: User
     ) {
         this.id = id;
         this.activityId = activityId;
@@ -44,6 +55,10 @@ export class Review {
         this.committeeComment = committeeComment;
         this.state = state;
         this.updatedAt = updatedAt;
+        this.activity = activity;
+        this.ownerUser = ownerUser;
+        this.instructorUser = instructorUser;
+        this.committeeUser = committeeUser;
     }
 
     static fromJSON(json: any): Review {
@@ -57,7 +72,12 @@ export class Review {
             json.committee,
             json.committeeComment,
             json.state,
-            json.updatedAt ? GoodDate.fromString(json.updatedAt) : undefined
+            json.updatedAt ? GoodDate.fromString(json.updatedAt) : undefined,
+            json.activity ? Activity.fromJSON(json.activity) : undefined,
+            json.ownerUser ? User.fromJSON(json.ownerUser) : undefined,
+            json.instructorUser ? User.fromJSON(json.instructorUser) : undefined,
+            json.committeeUser ? User.fromJSON(json.committeeUser) : undefined
+
         );
     }
 
@@ -87,7 +107,7 @@ export class Review {
         } else if (response.status === 500) {
             throw new Error(errorInternal);
         } else {
-            throw new Error(json['error']);
+            throw new Error(json.message);
         }
     };
 
@@ -109,7 +129,7 @@ export class Review {
         } else if (response.status === 500) {
             throw new Error(errorInternal);
         } else {
-            throw new Error(json['error']);
+            throw new Error(json.message);
         }
     };
 
