@@ -42,6 +42,20 @@ export class Ticket {
         this.activity = activity;
     }
 
+    clone(): Ticket {
+        return new Ticket(
+            this.id,
+            this.activityId,
+            this.detailId,
+            this.student,
+            this.type,
+            this.points,
+            this.date.toString(),
+            this.updatedAt.toString(),
+            this.activity
+        );
+    }
+
     static fromJSON(json: any): Ticket {
         return new Ticket(
             json.id,
@@ -94,8 +108,11 @@ export class Ticket {
         }
     };
 
-    static list = async (activityId: string, props: { serverEndpoint?: string }) => {
-        const response = await fetch(props.serverEndpoint + '/activity/' + activityId + '/ticket', {
+    static list = async (activityId: string, detailId: string | null, props: { serverEndpoint?: string }) => {
+        const url = detailId
+            ? `${props.serverEndpoint}/activity/${activityId}/detail/${detailId}/ticket`
+            : `${props.serverEndpoint}/activity/${activityId}/ticket`;
+        const response = await fetch(url, {
             headers: {
                 Authorization: getCookie('token') || '',
             },
@@ -118,6 +135,7 @@ export class Ticket {
 
     static create = async (
         activityId: string,
+        detailId: string,
         data: Array<{
             detailId: string;
             student: string;
@@ -126,7 +144,7 @@ export class Ticket {
         }>,
         props: { serverEndpoint?: string }
     ) => {
-        const response = await fetch(props.serverEndpoint + '/activity/' + activityId + '/ticket/new', {
+        const response = await fetch(`${props.serverEndpoint}/activity/${activityId}/detail/${detailId}/ticket/new`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',

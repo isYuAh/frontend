@@ -1,9 +1,8 @@
 <script lang="ts" setup>
 import { Review } from '@models/review';
 import { devConfig } from '@utils/devConfig';
-import { inject, ref } from 'vue';
+import { inject, ref, watch } from 'vue';
 import Spinner from '@components/spinner.vue';
-import { watch } from 'vue';
 
 const { setMessage } = inject('banner') as any;
 
@@ -25,11 +24,11 @@ const handleCreateReview = async () => {
                 type: 'success',
                 message: '创建审核成功',
             });
-            handleQuery();
+            await handleQuery();
         } catch (e) {
             setMessage({
                 type: 'error',
-                message: `创建审核失败 - ${e.message}`,
+                message: `创建审核失败`,
             });
             console.error(e);
         }
@@ -52,11 +51,15 @@ const handleCreateReview = async () => {
             console.error(e);
         }
     };
-watch(() => id, () => {
-    handleQuery();
-}, {
-    immediate: true,
-})
+watch(
+    () => id,
+    () => {
+        handleQuery();
+    },
+    {
+        immediate: true,
+    }
+);
 </script>
 <template>
     <h3 class="mb-4 text-2xl font-black">活动审核管理</h3>
@@ -139,7 +142,7 @@ watch(() => id, () => {
                                 }}
                             </span>
                         </td>
-                        <td class="px-6 py-4">{{ review.updatedAt.toLocalizedString() ?? '日期有误' }}</td>
+                        <td class="px-6 py-4">{{ review.updatedAt?.toLocalizedString() ?? '日期有误' }}</td>
                     </tr>
                 </tbody>
             </table>

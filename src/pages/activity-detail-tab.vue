@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import ActivityDetailTable from '@components/activity-detail-table.vue';
 const emit = defineEmits(['checkTicket'])
-const { id, editable } = defineProps<{ id: string; editable: boolean }>();
+const { id, editable, ticketable } = defineProps<{ id: string; editable: boolean, ticketable: boolean }>();
 </script>
 
 <template>

@@ -116,7 +116,7 @@ const handleQuery = async (_: boolean = false) => {
                 type: 'error',
                 message: '无法获取活动信息',
             });
-            console.log(e);
+            console.error(e);
             status.value = 2;
         }
     },
@@ -232,6 +232,7 @@ handleQuery();
                         :on-action="
                             (action: string) => {
                                 activeID = activity.id;
+                                activeDetailId = '';
                                 currentAction = action;
                             }
                         "
@@ -287,8 +288,9 @@ handleQuery();
         <activity-detail-tab
             v-if="currentAction === '活动事项与加分条'"
             :id="activeID"
-            :key="activeID + currentAction"
+            :key="activeID"
             :editable="[0, 3].indexOf(activities.find((a) => a.id === activeID)?.state ?? -1) != -1"
+            :ticketable="[2, 4, 5, 6].indexOf(activities.find((a) => a.id === activeID)?.state ?? -1) != -1"
             @checkTicket="
                 (detailId) => {
                     activeDetailId = detailId;
@@ -298,21 +300,21 @@ handleQuery();
         <activity-ticket-tab
             v-if="currentAction === '活动事项与加分条' && activeDetailId !== ''"
             :id="activeID"
-            :key="activeID + activeDetailId + currentAction"
+            :key="activeID + activeDetailId"
             :activeDetailId="activeDetailId!"
             :editable="[2, 6].indexOf(activities.find((a) => a.id === activeID)?.state ?? -1) != -1"
         />
         <activity-tab
             v-if="currentAction === '活动详情'"
             :id="activeID"
-            :key="activeID + activeDetailId + currentAction"
+            :key="activeID"
             :editable="[0, 3].indexOf(activities.find((a) => a.id === activeID)?.state ?? -1) != -1"
             :on-saved="onActivitySaved"
         />
         <activity-review-tab
             v-if="currentAction === '审核'"
             :id="activeID"
-            :key="activeID + activeDetailId + currentAction"
+            :key="activeID"
             :activityCreatable="[0, 3].indexOf(activities.find((a) => a.id === activeID)?.state ?? -1) != -1"
             :ticketCreatable="[2, 6].indexOf(activities.find((a) => a.id === activeID)?.state ?? -1) != -1"
         />

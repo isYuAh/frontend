@@ -4,7 +4,9 @@ import inputText from './input-text.vue';
 
 interface InputTextProps {
     ticket: Ticket;
-    id: string;
+    activityId: string;
+    detailId: string;
+    editable: boolean;
 }
 defineProps<InputTextProps>();
 const emit = defineEmits(['delete', 'submit']);
@@ -32,7 +34,7 @@ const emit = defineEmits(['delete', 'submit']);
         />
     </td>
     <td class="px-6 py-4">/</td>
-    <td class="px-6 py-4">
+    <td class="px-6 py-4" v-if="editable">
         <a class="text-primary dark:text-primary-200 m-1 underline" href="?" @click.prevent="emit('submit', ticket)"
         >提交单条</a>
         <a class="m-1 text-red-500 underline dark:text-red-200" href="?" @click.prevent="emit('delete', ticket)"

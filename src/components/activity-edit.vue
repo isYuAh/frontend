@@ -7,6 +7,7 @@ import InputTextarea from '@components/input-textarea.vue';
 import InputText from '@components/input-text.vue';
 import InputDate from '@components/input-date.vue';
 import ActivityPreview from '@components/activity-preview.vue';
+import { devConfig } from '@utils/devConfig';
 
 const { setMessage } = inject('banner') as any;
 
@@ -42,7 +43,7 @@ const getActivity = async () => {
         status.value = 0;
         try {
             const data = await Activity.get(id, {
-                serverEndpoint: 'http://127.0.0.1/api',
+                serverEndpoint: devConfig.serverEndpoint,
             });
             activity.value = {
                 id: id,
@@ -70,11 +71,11 @@ const getActivity = async () => {
         try {
             if (isCreatingNewActivity) {
                 await Activity.create(activity.value, {
-                    serverEndpoint: 'http://127.0.0.1/api',
+                    serverEndpoint: devConfig.serverEndpoint,
                 });
             } else {
                 await Activity.update(id, activity.value, {
-                    serverEndpoint: 'http://127.0.0.1/api',
+                    serverEndpoint: devConfig.serverEndpoint,
                 });
             }
             onSaved(activity.value);

@@ -10,10 +10,11 @@ export enum UserType {
     UserLocalCommittee,
     UserOrg,
     UserCommittee,
+    UserOP,
     UserStudent,
 }
 
-const UserTypeString = ['超级管理员', '指导老师', '院管组织', '院团委', '校级组织', '校团委', '学生'];
+const UserTypeString = ['超级管理员', '指导老师', '院管组织', '院团委', '校级组织', '校团委', '运维管理员', '学生'];
 
 export const getUserTypeString = (type: any) => {
     if (typeof type === 'string') {
@@ -57,7 +58,21 @@ export class User {
             return true;
         } else {
             const json = await response.json();
-            throw new Error(json.error);
+            throw new Error(json.message);
+        }
+    };
+
+    static getInfo = async (props: { serverEndpoint?: string }) => {
+        const response = await fetch(props.serverEndpoint + '/user/info', {
+                headers: {
+                    Authorization: getCookie('token') || '',
+                },
+            }),
+            json = await response.json();
+        if (response.ok) {
+            return json.data;
+        } else {
+            throw new Error(json.message);
         }
     };
 }
@@ -173,7 +188,7 @@ export class Admin extends User {
         } else if (response.status === 403) {
             throw new Error(errorForbidden);
         } else {
-            throw new Error(json.error);
+            throw new Error(json.message);
         }
     };
 
@@ -208,7 +223,7 @@ export class Admin extends User {
         } else if (response.status === 404) {
             throw new Error(errorNotFound);
         } else {
-            throw new Error(json.error);
+            throw new Error(json.message);
         }
     };
 
@@ -227,7 +242,7 @@ export class Admin extends User {
             throw new Error(errorNotFound);
         } else {
             const json = await response.json();
-            throw new Error(json.error);
+            throw new Error(json.message);
         }
     };
 
@@ -301,7 +316,7 @@ export class Student extends User {
         } else if (response.status === 403) {
             throw new Error(errorForbidden);
         } else {
-            throw new Error(json.error);
+            throw new Error(json.message);
         }
     };
 

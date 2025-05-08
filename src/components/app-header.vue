@@ -3,6 +3,7 @@ import { getStorageItem, setStorageItem } from '@utils/storage';
 import { User } from '@models/user';
 import { inject } from 'vue';
 import Logo from '@components/logo.vue';
+import { devConfig } from '@utils/devConfig';
 
 const { setMessage } = inject('banner') as any;
 
@@ -17,7 +18,7 @@ const signOut = async () => {
     if (confirm('确定登出系统？')) {
         setStorageItem('student', '');
         setStorageItem('admin', '');
-        if (await User.signOut({ serverEndpoint: 'http://127.0.0.1/api' })) {
+        if (await User.signOut({ serverEndpoint: devConfig.serverEndpoint })) {
             setMessage({ message: '已登出', type: 'success' });
             setTimeout(() => {
                 window.location.href = '/sign-in';

@@ -6,6 +6,7 @@ import { getStorageItem } from '@utils/storage';
 import { inject, ref } from 'vue';
 import Spinner from '@components/spinner.vue';
 import InputTextarea from '@components/input-textarea.vue';
+import { devConfig } from '@utils/devConfig';
 
 const { setMessage } = inject('banner') as any;
 
@@ -24,7 +25,7 @@ const getAdmin = async () => {
     status.value = 0;
     try {
         const t = await Admin.getAdmin(adminID, {
-            serverEndpoint: 'http://127.0.0.1/api',
+            serverEndpoint: devConfig.serverEndpoint,
         });
         admin.value = {
             name: t.name,
@@ -58,7 +59,7 @@ const onSubmit = async () => {
                 password: admin.value.password,
             },
             {
-                serverEndpoint: 'http://127.0.0.1/api',
+                serverEndpoint: devConfig.serverEndpoint,
             }
         );
         setMessage({

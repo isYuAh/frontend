@@ -9,7 +9,7 @@ import PendingTicketRow from '@/components/pending-ticket-row.vue';
 
 const { id, activeDetailId, editable } = defineProps<{
     id: string;
-    activeDetailId: string;
+    activeDetailId: string | null;
     editable: boolean;
 }>();
 const status = ref(0);
@@ -21,7 +21,7 @@ const getTicket = async () => {
     status.value = 0;
     try {
         pendingTickets.value = [];
-        tickets.value = await Ticket.list(id, { serverEndpoint: devConfig.serverEndpoint });
+        tickets.value = await Ticket.list(id, activeDetailId, { serverEndpoint: devConfig.serverEndpoint });
         status.value = 1;
         setMessage({
             type: 'success',
@@ -38,35 +38,41 @@ interface TicketData {
     type: number;
     points: number;
 }
-const addSignle = () => {
+
+const addRecord = () => {
     pendingTickets.value.push({
         detailId: activeDetailId,
         student: '',
         type: 0,
         points: 0,
     } as any);
-}
+};
 const uploadPending = async (singleData: Ticket | undefined) => {
-    let pendingData
+    let pendingData;
     if (pendingTickets.value.length === 0) {
         setMessage({
             type: 'error',
             message: '没有待上传的加分条',
         });
-        return
-    }else if (singleData) {
-        pendingData = [toRaw(singleData)]
-    }else {
-        pendingData = toRaw(pendingTickets.value as any as Ticket[])
+        return;
+    } else if (singleData) {
+        pendingData = [toRaw(singleData)];
+    } else {
+        pendingData = toRaw(pendingTickets.value as any as Ticket[]);
     }
-    Ticket.create(id, pendingData.map((t) => {
-        return {
-        detailId: activeDetailId,
-            student: t.student,
-            type: t.type,
-            points: t.points,
-        }
-    }), { serverEndpoint: devConfig.serverEndpoint })
+    Ticket.create(
+        id,
+        activeDetailId!,
+        pendingData.map((t) => {
+            return {
+                detailId: activeDetailId!,
+                student: t.student,
+                type: t.type,
+                points: t.points,
+            };
+        }),
+        { serverEndpoint: devConfig.serverEndpoint }
+    )
         .then(() => {
             setMessage({
                 type: 'success',
@@ -80,7 +86,7 @@ const uploadPending = async (singleData: Ticket | undefined) => {
                 message: e.message,
             });
         });
-}
+};
 const uploadTicket = async () => {
     const input = document.createElement('input');
     input.type = 'file';
@@ -93,13 +99,13 @@ const uploadTicket = async () => {
             const result = await parseCsv(file);
             const tickets: TicketData[] = result.data.map((row: any) => {
                 return {
-                    detailId: activeDetailId,
+                    detailId: activeDetailId!,
                     type: Number(row['类型']),
                     points: Number(row['分数'] * 100),
                     student: row['学号'],
                 };
             });
-            Ticket.create(id, tickets, { serverEndpoint: devConfig.serverEndpoint })
+            Ticket.create(id, activeDetailId!, tickets, { serverEndpoint: devConfig.serverEndpoint })
                 .then(() => {
                     setMessage({
                         type: 'success',
@@ -158,11 +164,7 @@ watch(
                                 上传加分条 CSV 表格
                             </a>
                             ，或者
-                            <a
-                                class="text-primary dark:text-primary-200 underline"
-                                href="?"
-                                @click.prevent="addSignle"
-                            >
+                            <a class="text-primary dark:text-primary-200 underline" href="?" @click.prevent="addRecord">
                                 新增单条数据
                             </a>
                             ，或者
@@ -183,7 +185,7 @@ watch(
                         <th class="px-6 py-3" scope="col">类型</th>
                         <th class="px-6 py-3" scope="col">分数</th>
                         <th class="px-6 py-3" scope="col">活动日期</th>
-                        <th class="px-6 py-3" scope="col">操作</th>
+                        <th v-if="editable" class="px-6 py-3" scope="col">操作</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -192,7 +194,7 @@ watch(
                         :key="ticket.id"
                         class="border-gray-200 bg-white not-last:border-b dark:border-gray-700 dark:bg-gray-800"
                     >
-                        <TicketRow :id="id" :ticket="ticket" @update="getTicket" />
+                        <TicketRow :activity-id="id" :detail-id="activeDetailId" :ticket="ticket" @update="getTicket" :editable="editable" />
                     </tr>
                     <tr
                         v-for="ticket in pendingTickets"
@@ -200,11 +202,13 @@ watch(
                         class="border-gray-200 bg-white not-last:border-b dark:border-gray-700 dark:bg-gray-800"
                     >
                         <PendingTicketRow
-                            :ticket="ticket"
-                            :id="id"
                             :key="ticket.id"
+                            :activity-id="id"
+                            :detail-id="activeDetailId!"
+                            :ticket="ticket"
+                            :editable="editable"
+                            @delete="(ticket) => (pendingTickets = pendingTickets.filter((t) => t.id !== ticket.id))"
                             @submit="(ticket) => uploadPending(ticket)"
-                            @delete="(ticket) => pendingTickets = pendingTickets.filter((t) => t.id !== ticket.id)"
                         />
                     </tr>
                 </tbody>
@@ -215,5 +219,9 @@ watch(
     <p v-if="status === 2">
         无法获取活动事项信息；
         <a class="text-primary dark:text-primary-200 underline" href="?" @click.prevent="getTicket"> 重新加载 </a>
+    </p>
+    <p class="mt-8 font-bold">
+        注意：直接新增或修改记录时，加分分值请填入 ×100 后的值。例如，加一分时请填入 100。上传 CSV
+        则不需要进行修改。分值精度保留到 0.01。
     </p>
 </template>

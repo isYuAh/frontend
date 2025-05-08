@@ -34,7 +34,7 @@ const handleSubmit = async () => {
     loading.value = true;
 
     try {
-        const result = await Admin.signInAdmin(formData.value, { serverEndpoint: 'http://localhost/api' });
+        const result = await Admin.signInAdmin(formData.value, { serverEndpoint: devConfig.serverEndpoint });
 
         // localhost env will prevent the browser from setting a persistent cookie
         // so we need to set the cookie manually

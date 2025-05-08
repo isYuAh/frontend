@@ -73,7 +73,7 @@ export class ActivityDetail {
         } else if (response.status === 500) {
             throw new Error(errorInternal);
         } else {
-            throw new Error(json.error);
+            throw new Error(json.message);
         }
     };
 
@@ -103,7 +103,7 @@ export class ActivityDetail {
         } else if (response.status === 500) {
             throw new Error(errorInternal);
         } else {
-            throw new Error(json.error);
+            throw new Error(json.message);
         }
     };
 
@@ -126,7 +126,7 @@ export class ActivityDetail {
             throw new Error(errorInternal);
         } else {
             const json = await response.json();
-            throw new Error(json.error);
+            throw new Error(json.message);
         }
     };
 }

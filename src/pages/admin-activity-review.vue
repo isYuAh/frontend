@@ -7,6 +7,7 @@ import { errorBadRequest, errorForbidden, errorInternal, errorNotFound } from '@
 import ActivityDetailTab from '@pages/activity-detail-tab.vue';
 import { getStorageItem } from '@utils/storage';
 import { UserType } from '@models/user';
+import ActivityTicketTab from '@pages/activity-ticket-tab.vue';
 
 const { setMessage } = inject('banner') as any;
 
@@ -121,7 +122,7 @@ const openInfoDialog = async (review: Review) => {
         currentReview.value = review;
         dialogType.value = 'info';
         dialogTitle.value = review.type === 0 ? '活动内容审核详情' : '加分条审核详情';
-        dialogMode.value = review.type ? 'ticket' : 'activity';
+        dialogMode.value = review.type === 0 ? 'activity' : 'ticket';
         showDialog.value = true;
     },
     openApproveDialog = (review: Review) => {
@@ -388,7 +389,9 @@ handleQuery();
     </div>
 
     <div v-if="showDialog" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-        <div class="w-full max-w-md rounded-lg bg-white p-6 shadow-lg dark:bg-gray-800">
+        <div
+            class="w-full max-w-md rounded-lg bg-white p-6 shadow-lg lg:max-w-2xl xl:max-w-4xl 2xl:max-w-6xl dark:bg-gray-800"
+        >
             <div class="mb-4 flex items-center justify-between">
                 <h3 class="text-lg font-medium text-gray-900 dark:text-white">{{ dialogTitle }}</h3>
                 <button class="text-gray-400 hover:text-gray-500" @click="closeDialog">
@@ -410,7 +413,9 @@ handleQuery();
                     :id="currentReview!.activityId"
                     :key="currentReview?.activityId"
                     :editable="false"
+                    :ticketable="currentReview?.type == 1"
                 />
+                <activity-ticket-tab :id="currentReview!.activityId" :active-detail-id="null" :editable="false" />
             </div>
 
             <!-- 审核对话框内容 -->

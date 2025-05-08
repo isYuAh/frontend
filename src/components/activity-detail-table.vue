@@ -4,10 +4,11 @@ import { inject, ref } from 'vue';
 import Spinner from '@components/spinner.vue';
 import DetailRow from '@components/detail-row.vue';
 import { nanoid } from '@utils/crypto';
+import { devConfig } from '@utils/devConfig';
 
 const { setMessage } = inject('banner') as any;
 
-const { id, editable } = defineProps<{ id: string; editable: boolean }>();
+const { id, editable, ticketable } = defineProps<{ id: string; editable: boolean; ticketable: boolean }>();
 
 interface Model {
     id: string;
@@ -23,7 +24,7 @@ const getActivityDetails = async () => {
     status.value = 0;
     try {
         const t = await ActivityDetail.list(id, {
-            serverEndpoint: 'http://127.0.0.1/api',
+            serverEndpoint: devConfig.serverEndpoint,
         });
         details.value = t.map((detail) => {
             return {
@@ -42,7 +43,7 @@ const getActivityDetails = async () => {
             type: 'error',
             message: '无法获取活动信息',
         });
-        console.log(e);
+        console.error(e);
         status.value = 2;
     }
 };
@@ -103,12 +104,13 @@ const addDetail = () => {
             </thead>
             <tbody>
                 <DetailRow
-                    @check-ticket="(detailId: any) => emit('checkTicket', detailId)"
                     v-for="detail in details"
                     :key="detail.id"
                     :activity-id="id"
                     :detail="detail"
                     :editable="editable"
+                    :ticketable="ticketable"
+                    @check-ticket="(detailId: any) => emit('checkTicket', detailId)"
                     @delete-temporary-detail="details.splice(details.indexOf(detail), 1)"
                 />
             </tbody>
@@ -120,5 +122,9 @@ const addDetail = () => {
         <a class="text-primary dark:text-primary-200 underline" href="?" @click.prevent="getActivityDetails">
             重新加载
         </a>
+    </p>
+    <p class="mt-8 font-bold">
+        注意：若要新建或修改活动事项，最大分值请填入 ×100 后的值。例如，参与 A 活动最多可以加 4 分时请最大分值请填入
+        400。分值精度保留到 0.01。
     </p>
 </template>

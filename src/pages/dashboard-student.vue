@@ -18,7 +18,6 @@ const csvData = ref<{ classes?: any[]; schools?: any[]; students?: any[] }>({});
 function downloadCSV(data: any[], headers: string[], filename: string) {
     const ws = XLSX.utils.json_to_sheet(data, { header: headers });
     const wb = XLSX.utils.book_new();
-    console.log(ws, wb, data);
     XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
     const wbout = XLSX.write(wb, { bookType: 'csv', type: 'array' });
     const blob = new Blob([wbout], { type: 'text/csv;' });

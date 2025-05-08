@@ -36,7 +36,7 @@ const getActivity = async () => {
         status.value = 0;
         try {
             const data = await Activity.get(id, {
-                serverEndpoint: 'http://127.0.0.1/api',
+                serverEndpoint: devConfig.serverEndpoint,
             });
             activity.value = {
                 id: id,

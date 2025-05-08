@@ -12,10 +12,11 @@ interface DetailView {
     maxPoints: number;
 }
 
-const { activityId, detail, editable } = defineProps<{
+const { activityId, detail, editable, ticketable } = defineProps<{
     activityId: string;
     detail: DetailView;
     editable: boolean;
+    ticketable: boolean;
 }>();
 const editing = ref(detail.id.startsWith('new_'));
 
@@ -30,7 +31,7 @@ function handleSubmit() {
             {
                 id: detail.id.substring(4),
                 name: detail.name,
-                maxPoints: 0,
+                maxPoints: detail.maxPoints,
             },
             {
                 serverEndpoint: devConfig.serverEndpoint,
@@ -89,7 +90,7 @@ function handleDelete() {
         </td>
         <td>
             <template v-if="!editing">
-                <span>{{ detail.maxPoints }}</span>
+                <span>{{ detail.maxPoints / 100 }}</span>
             </template>
             <template v-else>
                 <input-text
@@ -117,7 +118,7 @@ function handleDelete() {
                 <a class="m-1 text-red-500 underline dark:text-red-200" href="?" @click.prevent="handleDelete">删除</a>
             </template>
             <template v-else>无</template>
-            <a class="text-primary dark:text-primary-200 m-1 underline" href="?" @click.prevent="emit('checkTicket', detail.id)"
+            <a class="text-primary dark:text-primary-200 m-1 underline" href="?" @click.prevent="emit('checkTicket', detail.id)" v-if="ticketable"
                 >加分条</a
             >
         </td>

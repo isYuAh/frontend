@@ -6,14 +6,26 @@ import { devConfig } from '@/utils/devConfig';
 
 interface InputTextProps {
     ticket: Ticket;
-    id: string;
+    activityId: string;
+    detailId: string | null;
+    editable: boolean;
+}
+
+interface EditableTicket {
+    student: string;
+    type: number;
+    points: number;
 }
 
 const props = defineProps<InputTextProps>();
 const editing = ref(false);
 const emit = defineEmits(['update']);
 const { setMessage } = inject('banner') as any;
-const temp = ref(structuredClone(toRaw(props.ticket)));
+const temp = ref<EditableTicket>({
+    student: props.ticket.student,
+    type: props.ticket.type,
+    points: props.ticket.points,
+});
 watch(
     () => props.ticket,
     (newValue) => {
@@ -21,8 +33,8 @@ watch(
     }
 );
 
-const handleDeleteTicket = async (ticket: Ticket) => {
-    Ticket.delete(props.id, ticket.id, { serverEndpoint: devConfig.serverEndpoint })
+const handleDeleteTicket = async () => {
+    Ticket.delete(props.activityId, props.ticket.id, { serverEndpoint: devConfig.serverEndpoint })
         .then(() => {
             setMessage({
                 type: 'success',
@@ -37,15 +49,14 @@ const handleDeleteTicket = async (ticket: Ticket) => {
             });
         });
 };
-const handleSubmitEdit = async (ticket: Ticket) => {
+const handleSubmitEdit = async () => {
     try {
         await Ticket.update(
-            props.id,
-            ticket.id,
+            props.activityId,
+            props.ticket.id,
             {
-                student: ticket.student,
-                type: ticket.type,
-                points: ticket.points,
+                ...temp.value,
+                detailId: props.detailId!,
             },
             { serverEndpoint: devConfig.serverEndpoint }
         );
@@ -63,16 +74,15 @@ const handleSubmitEdit = async (ticket: Ticket) => {
 };
 const handleCancel = () => {
     try {
-        console.log(props.ticket);
         temp.value = structuredClone(toRaw(props.ticket));
         editing.value = false;
     } catch (e) {
-        console.log(e);
+        console.error(e);
     }
 };
 </script>
 <template>
-    <td class="px-6 py-4">{{ temp.id }}</td>
+    <td class="px-6 py-4">{{ props.ticket.id }}</td>
     <td class="px-6 py-4">
         <template v-if="editing">
             <input-text v-model="temp.student" class="mx-1 w-32 py-2" name="student" type="text" />
@@ -94,25 +104,17 @@ const handleCancel = () => {
     </td>
     <td class="px-6 py-4">
         <template v-if="editing">
-            <input-text
-                v-model="temp.points"
-                :preprocess="(value: number) => value / 100"
-                :process="(value: number) => value * 100"
-                :step="100"
-                class="mx-1 w-32 py-2"
-                name="points"
-                type="number"
-            />
+            <input-text v-model="temp.points" class="mx-1 w-32 py-2" name="points" type="number" />
         </template>
         <template v-else>
             {{ temp.points / 100 }}
         </template>
     </td>
-    <td class="px-6 py-4">{{ temp.date.toLocalizedString() }}</td>
-    <td class="px-6 py-4">
+    <td class="px-6 py-4">{{ props.ticket.date.toLocalizedDateString() }}</td>
+    <td class="px-6 py-4" v-if="editable">
         <template v-if="editing">
             <a class="text-primary dark:text-primary-200 m-1 underline" href="?" @click.prevent="handleCancel">取消</a>
-            <a class="text-primary dark:text-primary-200 m-1 underline" href="?" @click.prevent="handleSubmitEdit(temp)"
+            <a class="text-primary dark:text-primary-200 m-1 underline" href="?" @click.prevent="handleSubmitEdit()"
                 >提交</a
             >
         </template>
@@ -120,7 +122,7 @@ const handleCancel = () => {
             <a class="text-primary dark:text-primary-200 m-1 underline" href="?" @click.prevent="editing = true"
                 >修改</a
             >
-            <a class="m-1 text-red-500 underline dark:text-red-200" href="?" @click.prevent="handleDeleteTicket(temp)"
+            <a class="m-1 text-red-500 underline dark:text-red-200" href="?" @click.prevent="handleDeleteTicket()"
                 >删除</a
             >
         </template>

@@ -71,7 +71,7 @@ try {
             <div class="flex justify-between space-x-8 text-3xl font-bold text-white">
                 <router-link
                     class="bg-primary/60 flex h-72 flex-1/2 items-center justify-center rounded-xl text-center shadow-xl backdrop-blur-xs duration-100 hover:shadow-2xl"
-                    to="/dashboard"
+                    to="/dashboard/admin"
                 >
                     <div>前往管理面板！</div>
                 </router-link>

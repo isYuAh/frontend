@@ -13,11 +13,13 @@ const DashboardStudentPage = () => import('@pages/dashboard-student.vue');
 const QueryTicketPage = () => import('@pages/query-ticket.vue');
 const OrgListPage = () => import('@pages/org-list.vue');
 const ActivityListPage = () => import('@pages/activity-list.vue');
+const OAuth2ChallengePage = () => import('@pages/oauth2-challenge.vue');
 
 const routes = [
     { path: '/', component: HomePage },
     { path: '/about', component: AboutPage },
     { path: '/sign-in', component: SignInPage },
+    { path: '/oauth2-challenge', component: OAuth2ChallengePage },
     { path: '/dashboard/admin', component: DashboardAdminPage },
     { path: '/dashboard/activity', component: DashboardActivityPage },
     { path: '/dashboard/student', component: DashboardStudentPage },

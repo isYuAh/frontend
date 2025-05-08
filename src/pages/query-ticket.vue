@@ -6,6 +6,7 @@ import InputDate from '@components/input-date.vue';
 import InputSelect from '@components/input-select.vue';
 import { ref } from 'vue';
 import AppBreadcrumbs from '@components/app-breadcrumbs.vue';
+import { devConfig } from '@utils/devConfig';
 
 setTitle('查询加分条');
 
@@ -38,7 +39,7 @@ const handleSubmit = async () => {
                 endDate: GoodDate.fromString(formData.value.endDate),
                 type: parseInt(formData.value.type),
             },
-            { serverEndpoint: 'http://127.0.0.1/api' }
+            { serverEndpoint: devConfig.serverEndpoint }
         );
     } catch (error) {
         console.error('Error fetching tickets:', error);
@@ -95,8 +96,8 @@ const handleSubmit = async () => {
                     <tbody>
                         <tr v-for="ticket in tickets" :key="ticket.id" class="h-10">
                             <td>{{ ticket.activity?.name ?? '活动有误' }}</td>
-                            <td>{{ ticket.date }}</td>
-                            <td>{{ ticket.points }}</td>
+                            <td>{{ ticket.date.toLocalizedDateString() }}</td>
+                            <td>{{ ticket.points / 100 }}</td>
                         </tr>
                     </tbody>
                 </table>

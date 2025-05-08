@@ -5,6 +5,7 @@ import { computed, inject, ref } from 'vue';
 import Spinner from '@components/spinner.vue';
 import AdminRow from '@components/admin-row.vue';
 import { nanoid } from '@utils/crypto';
+import { devConfig } from '@utils/devConfig';
 
 const { setMessage } = inject('banner') as any;
 
@@ -42,7 +43,7 @@ const getAdmins = async () => {
     status.value = 0;
     try {
         const t = await Admin.listAdmin(false, {
-            serverEndpoint: 'http://127.0.0.1/api',
+            serverEndpoint: devConfig.serverEndpoint,
         });
         admins.value = t.map((admin) => {
             return {
