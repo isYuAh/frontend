@@ -1,3 +1,3 @@
 export const devConfig = {
-    serverEndpoint: 'http://2ketang.hitwh.edu.cn/api',
+    serverEndpoint: 'http://localhost:8080/api',
 };

@@ -5,24 +5,26 @@ export class ActivityDetail {
     id: string;
     activityId: string;
     name: string;
-    maxPoints: number;
+    dMaxPoints: number;
+    pMaxPoints: number;
 
-    constructor(id: string, activityId: string, name: string, maxPoints: number) {
+    constructor(id: string, activityId: string, name: string, dMaxPoints: number, pMaxPoints: number) {
         this.id = id;
         this.activityId = activityId;
         this.name = name;
-        this.maxPoints = maxPoints;
+        this.dMaxPoints = dMaxPoints;
+        this.pMaxPoints = pMaxPoints;
     }
 
     static fromJSON(json: any): ActivityDetail {
-        return new ActivityDetail(json.id, json.activityId, json.name, json.maxPoints);
+        return new ActivityDetail(json.id, json.activityId, json.name, json.dMaxPoints, json.pMaxPoints);
     }
 
     static fromJSONList(json: any): ActivityDetail[] {
         return json.map((item: any) => ActivityDetail.fromJSON(item));
     }
 
-    static template = new ActivityDetail('', '', '', 0);
+    static template = new ActivityDetail('', '', '', 0, 0);
 
     static list = async (activityId: string, props: { serverEndpoint?: string }) => {
         const response = await fetch(props.serverEndpoint + '/activity/' + activityId + '/detail', {
@@ -49,7 +51,8 @@ export class ActivityDetail {
         data: {
             id: string;
             name: string;
-            maxPoints: number;
+            dMaxPoints: number;
+            pMaxPoints: number;
         },
         props: { serverEndpoint?: string }
     ) => {
@@ -82,7 +85,8 @@ export class ActivityDetail {
         id: string,
         data: {
             name: string;
-            maxPoints: number;
+            dMaxPoints: number;
+            pMaxPoints: number;
         },
         props: { serverEndpoint?: string }
     ) => {

@@ -9,7 +9,8 @@ const emit = defineEmits(['deleteTemporaryDetail', 'checkTicket']);
 interface DetailView {
     id: string;
     name: string;
-    maxPoints: number;
+    dMaxPoints: number;
+    pMaxPoints: number;
 }
 
 const { activityId, detail, editable, ticketable } = defineProps<{
@@ -19,7 +20,6 @@ const { activityId, detail, editable, ticketable } = defineProps<{
     ticketable: boolean;
 }>();
 const editing = ref(detail.id.startsWith('new_'));
-
 function handleSubmit() {
     if (detail.id.startsWith('new_')) {
         if (detail.name === '') {
@@ -31,7 +31,8 @@ function handleSubmit() {
             {
                 id: detail.id.substring(4),
                 name: detail.name,
-                maxPoints: detail.maxPoints,
+                dMaxPoints: detail.dMaxPoints,
+                pMaxPoints: detail.pMaxPoints,
             },
             {
                 serverEndpoint: devConfig.serverEndpoint,
@@ -51,7 +52,8 @@ function handleSubmit() {
             detail.id,
             {
                 name: detail.name,
-                maxPoints: detail.maxPoints,
+                dMaxPoints: detail.dMaxPoints,
+                pMaxPoints: detail.pMaxPoints,
             },
             {
                 serverEndpoint: devConfig.serverEndpoint,
@@ -90,11 +92,26 @@ function handleDelete() {
         </td>
         <td>
             <template v-if="!editing">
-                <span>{{ detail.maxPoints / 100 }}</span>
+                <span>{{ detail.dMaxPoints / 100 }}</span>
             </template>
             <template v-else>
                 <input-text
-                    v-model="detail.maxPoints"
+                    v-model="detail.dMaxPoints"
+                    class="mx-1 w-32 py-2"
+                    name="maxPoints"
+                    required
+                    step="0.1"
+                    type="number"
+                />
+            </template>
+        </td>
+        <td>
+            <template v-if="!editing">
+                <span>{{ detail.pMaxPoints / 100 }}</span>
+            </template>
+            <template v-else>
+                <input-text
+                    v-model="detail.pMaxPoints"
                     class="mx-1 w-32 py-2"
                     name="maxPoints"
                     required

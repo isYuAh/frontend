@@ -11,7 +11,8 @@ const { setMessage } = inject('banner') as any;
 const activities = ref<Activity[]>([]),
     count = ref(0),
     limit = 20,
-    offset = ref(0);
+    currentPage = ref(1),
+    totalPage = ref(1);
 const listLoading = ref(false);
 
 const selectedActivityId: any = ref('');
@@ -27,7 +28,8 @@ const fetchActivityList = async () => {
         count.value = await Activity.listCount(-1, {
             serverEndpoint: devConfig.serverEndpoint,
         });
-        activities.value = await Activity.list(limit, offset.value, -1, {
+        totalPage.value = Math.max(1, Math.ceil(count.value / limit));
+        activities.value = await Activity.list(limit, (currentPage.value - 1) * limit, -1, {
             serverEndpoint: devConfig.serverEndpoint,
         });
 
@@ -72,6 +74,18 @@ const selectActivity = (id: string) => {
 };
 
 fetchActivityList();
+const handlePrevPage = () => {
+    if (currentPage.value > 1) {
+        currentPage.value--;
+        fetchActivityList();
+    }
+};
+const handleNextPage = () => {
+    if (currentPage.value < totalPage.value) {
+        currentPage.value++;
+        fetchActivityList();
+    }
+};
 </script>
 
 <template>
@@ -82,8 +96,26 @@ fetchActivityList();
         <div class="flex w-full flex-col gap-6 md:flex-row">
             <div class="w-full md:w-1/3">
                 <div class="activity-detail rounded-lg border p-4">
-                    <h3 class="text-primary dark:text-primary-200 mb-4 text-xl font-bold">活动列表</h3>
-
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-primary dark:text-primary-200 text-xl font-bold">活动列表</h3>
+                        <div class="flex items-center gap-2">
+                            <button
+                                class="px-2 py-1 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-50"
+                                :disabled="currentPage === 1"
+                                @click="handlePrevPage"
+                            >
+                                ←
+                            </button>
+                            <span class="mx-1 text-sm">{{ currentPage }} / {{ totalPage }}</span>
+                            <button
+                                class="px-2 py-1 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-50"
+                                :disabled="currentPage === totalPage"
+                                @click="handleNextPage"
+                            >
+                                →
+                            </button>
+                        </div>
+                    </div>
                     <div class="activity-list">
                         <Spinner v-if="listLoading" />
                         <div v-else-if="activities.length === 0" class="py-2 text-gray-700 dark:text-gray-300">

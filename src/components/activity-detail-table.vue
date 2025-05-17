@@ -13,7 +13,8 @@ const { id, editable, ticketable } = defineProps<{ id: string; editable: boolean
 interface Model {
     id: string;
     name: string;
-    maxPoints: number;
+    dMaxPoints: number;
+    pMaxPoints: number;
 }
 
 const emit = defineEmits(['checkTicket']);
@@ -26,11 +27,13 @@ const getActivityDetails = async () => {
         const t = await ActivityDetail.list(id, {
             serverEndpoint: devConfig.serverEndpoint,
         });
+        console.log(t);
         details.value = t.map((detail) => {
             return {
                 id: detail.id,
                 name: detail.name,
-                maxPoints: detail.maxPoints,
+                dMaxPoints: detail.dMaxPoints,
+                pMaxPoints: detail.pMaxPoints
             };
         });
         setMessage({
@@ -54,7 +57,8 @@ const addDetail = () => {
     let newDetail: Model = {
         id: 'new_' + nanoid(6),
         name: '',
-        maxPoints: 0,
+        dMaxPoints: 0,
+        pMaxPoints: 0,
     };
 
     details.value.push(newDetail);
@@ -98,7 +102,8 @@ const addDetail = () => {
                 <tr>
                     <th class="px-6 py-3" scope="col">ID</th>
                     <th class="px-6 py-3" scope="col">名称</th>
-                    <th class="px-6 py-3" scope="col">最大分数</th>
+                    <th class="px-6 py-3" scope="col">最大日常行为分</th>
+                    <th class="px-6 py-3" scope="col">最大个性发展分</th>
                     <th class="px-6 py-3" scope="col">操作</th>
                 </tr>
             </thead>

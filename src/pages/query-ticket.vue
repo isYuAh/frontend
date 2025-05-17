@@ -100,6 +100,12 @@ const handleSubmit = async () => {
                             <td>{{ ticket.points / 100 }}</td>
                         </tr>
                     </tbody>
+                    <tfoot>
+                        <tr class="h-10 border-t border-gray-600 dark:border-gray-400">
+                            <td colspan="2" class="text-right">总计</td>
+                            <td>{{ tickets.reduce((acc, ticket) => acc + ticket.points, 0) / 100 }}</td>
+                        </tr>
+                    </tfoot>
                 </table>
             </div>
         </div>
